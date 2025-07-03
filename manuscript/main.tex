@@ -1,0 +1,51 @@
+\documentclass[10pt]{article}
+
+
+\usepackage{geometry}
+\geometry{left=1.7cm,right=1.7cm, top=1.7cm, bottom=1.7cm}
+
+\usepackage{multicol}
+\setlength{\columnsep}{1cm}
+
+\usepackage{nopageno}
+
+
+\usepackage{newtxtext}
+\usepackage{newtxmath}
+
+\usepackage[brazil]{babel}
+
+\usepackage{lipsum}
+
+% ----------------------------
+% Updating section headers
+\usepackage{titlesec}
+
+\renewcommand{\thesection}{\Roman{section}.}
+\titleformat{\section}
+{\sc\centering}{\thesection}{1em}{}
+
+\usepackage{titling}
+
+\pretitle{
+    \begin{center}
+        \LARGE
+}
+\posttitle{
+    \end{center}
+}
+
+\begin{document}
+\title{Algoritmos de Coloração}
+\author{Lucas Guido \and Caio Stoduto}
+\date{}
+\maketitle
+
+\begin{multicols*}{2}
+    \lipsum{400}
+\section{Introdução}
+    \lipsum{300}
+\section{Metodologia}
+    
+\end{multicols*}
+\end{document}
