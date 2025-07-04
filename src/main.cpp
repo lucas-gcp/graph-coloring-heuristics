@@ -11,8 +11,10 @@ using namespace std;
 int main(int argc, char* argv[]) {
     
     ifstream in_file;
-    if (argc != 2)
+    if (argc != 2) {
         cout << "Wrong args" << endl;
+        return 1;
+    }
 
     in_file.open(argv[1]);
     Graph G(in_file);
