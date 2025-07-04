@@ -6,7 +6,7 @@
 using namespace std;
 
 int first_fit(Graph G) {
-    int colors = 1;
+    int num_colors = 1;
     vector<int> coloring(G.n_vertices, -1);
     coloring[0] = 0;
     unsigned colored = 1;
@@ -14,7 +14,7 @@ int first_fit(Graph G) {
     unsigned vertex = 1;
     int usable;
     while(colored != G.n_vertices) {
-        for (int i = 0; i < colors; i++) {
+        for (int i = 0; i < num_colors; i++) {
             usable = 1;
             for (auto neighbor : G.neighbors[vertex]) {
                 if (coloring[neighbor] == i) {
@@ -28,14 +28,14 @@ int first_fit(Graph G) {
             }
         }
         if (!usable) {
-            coloring[vertex] = colors;
-            colors++;
+            coloring[vertex] = num_colors;
+            num_colors++;
         }
         colored++;
         vertex++;
     }
     
-    return colors;
+    return num_colors;
 }
 /*
 int welsh_powel(Graph G) {

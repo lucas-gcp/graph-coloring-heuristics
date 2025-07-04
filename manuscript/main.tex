@@ -12,8 +12,11 @@
 
 \usepackage{newtxtext}
 \usepackage{newtxmath}
+\usepackage{courier}
 
 \usepackage[brazil]{babel}
+
+\usepackage{hyperref}
 
 \usepackage{lipsum}
 
@@ -23,9 +26,17 @@
 
 \renewcommand{\thesection}{\Roman{section}.}
 \titleformat{\section}
-{\sc\centering}{\thesection}{1em}{}
+{\scshape\centering}{\thesection}{1em}{}
 
+\renewcommand{\thesubsection}{\Alph{subsection}.}
+\titleformat{\subsection}
+{\itshape}{\thesubsection}{1em}{}
+
+% ----------------------------
+% Updating title and authors
 \usepackage{titling}
+\usepackage{authblk}
+\renewcommand\Authand{, }
 
 \pretitle{
     \begin{center}
@@ -35,16 +46,48 @@
     \end{center}
 }
 
-\begin{document}
+\preauthor{
+    \fontsize{11}{11}
+    \begin{center}
+}
+\postauthor{
+    \end{center}
+    \fontsize{10}{10}
+}
+
 \title{Algoritmos de Coloração}
-\author{Lucas Guido \and Caio Stoduto}
+
+\author[1]{Lucas Guido}
+\author[2]{Caio Stoduto\fontsize{10}{10}}
+\affil[1]{\fontsize{10}{10}Universidade Federal do ABC, Santo André -- SP, Brasil  \authorcr
+\fontsize{9}{9}\texttt{lucas.guido@aluno.ufabc.edu.br}\fontsize{10}{10}}
+\affil[2]{\fontsize{10}{10}Universidade Federal do ABC, Santo André -- SP, Brasil \authorcr
+\fontsize{9}{9}\texttt{caio.stoduto@aluno.ufabc.edu.br}\fontsize{10}{10}}
+
 \date{}
+
+\begin{document}
+
 \maketitle
 
+\noindent
+\small
+\textit{\textbf{Resumo}}
+
+\noindent
+Bla bla
+
+\mdseries
+\normalsize
+\indent
+
 \begin{multicols*}{2}
-    \lipsum{400}
 \section{Introdução}
-    \lipsum{300}
+\lipsum
+
+\subsection{Coisas}
+
+\lipsum
 \section{Metodologia}
     
 \end{multicols*}
