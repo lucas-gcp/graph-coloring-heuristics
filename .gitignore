@@ -1,0 +1,7 @@
+.vscode
+*.o
+*.exe
+program
+
+manuscript/*
+!manuscript/main.tex
