@@ -26,29 +26,29 @@ unsigned first_fit(Graph &G) {
     int num_colors = 1;
     vector<int> coloring(G.n_vertices, -1);
     coloring[0] = 0;
-    unsigned colored = 1;
+    unsigned n_colored = 1;
 
     unsigned vertex = 1;
-    int usable;
-    while (colored != G.n_vertices) {
+    bool usable_color;
+    while (n_colored != G.n_vertices) {
         for (int i = 0; i < num_colors; i++) {
-            usable = 1;
+            usable_color = true;
             for (auto neighbor : G.neighbors[vertex]) {
                 if (coloring[neighbor] == i) {
-                    usable = 0;
+                    usable_color = false;
                     break;
                 }
             }
-            if (usable) {
+            if (usable_color) {
                 coloring[vertex] = i;
                 break;
             }
         }
-        if (!usable) {
+        if (!usable_color) {
             coloring[vertex] = num_colors;
             num_colors++;
         }
-        colored++;
+        n_colored++;
         vertex++;
     }
 
@@ -103,11 +103,11 @@ unsigned welsh_powel(Graph &G) {
     return num_colors;
 }
 
-/*
 unsigned ldo(Graph &G) {
-
+    
 }
 
+/*
 unsigned ido(Graph &G) {
 
 }
