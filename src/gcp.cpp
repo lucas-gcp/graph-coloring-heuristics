@@ -1,6 +1,7 @@
 #include "gcp.h"
 
 #include <chrono>
+#include <forward_list>
 #include <iomanip>
 #include <iostream>
 #include <vector>
@@ -53,7 +54,28 @@ unsigned first_fit(Graph &G) {
 }
 
 unsigned welsh_powel(Graph &G) {
-    return -1;
+    int num_colors = 0;
+    forward_list<unsigned> uncolored;
+
+    for (int i = G.n_vertices - 1; i >= 0; i--) {
+        uncolored.push_front(G.degrees[i].index);
+    }
+
+    // for (auto u : uncolored) {
+    //     auto uncolored_vertex = *uncolored.begin();
+
+    //     for (auto v : uncolored) {
+    //         if (G.adj_matrix[u][v] == 1) {
+    //             // uncolored.remove(1);
+
+    //             // v.remove()
+    //         }
+    //     }
+
+    //     num_colors++;
+    // }
+
+    return num_colors;
 }
 
 /*
