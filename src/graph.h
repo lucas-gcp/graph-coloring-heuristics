@@ -22,9 +22,9 @@ class Graph {
     double sortDegrees();
 
     unsigned n_vertices, n_edges;
-    vector<VertexDegree> degrees;
+    vector<vector<unsigned>> adj_matrix;
     vector<vector<unsigned>> neighbors;
-    // vector<int> &get_neighbors(int v);
+    vector<VertexDegree> degrees;
 
     double sort_time;
 };

@@ -22,6 +22,7 @@ Graph::Graph(ifstream &in_file) {
     avg_d = n_edges / n_vertices;
 
     neighbors.assign(n_vertices, vector<unsigned>());
+    adj_matrix.assign(n_vertices, vector<unsigned>(n_vertices, 0));
     degrees.reserve(n_vertices);
 
     for (unsigned i = 0; i < n_vertices; i++) {
@@ -39,8 +40,13 @@ Graph::Graph(ifstream &in_file) {
     unsigned u, v;
     for (unsigned i = 0; i < n_edges; i++) {
         in_file >> e >> u >> v;
+
         neighbors[u - 1].push_back(v - 1);
         neighbors[v - 1].push_back(u - 1);
+
+        adj_matrix[u - 1][v - 1] = 1;
+        adj_matrix[v - 1][u - 1] = 1;
+
         degrees[u - 1].degree++;
         degrees[v - 1].degree++;
     }
