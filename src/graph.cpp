@@ -5,6 +5,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -43,4 +44,6 @@ Graph::Graph(ifstream &in_file) {
         degrees[u - 1].degree++;
         degrees[v - 1].degree++;
     }
+
+    sort(degrees.begin(), degrees.end(), [](VertexDegree u, VertexDegree v) {return u.degree > v.degree;});
 }

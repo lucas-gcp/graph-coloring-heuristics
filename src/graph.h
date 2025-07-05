@@ -23,6 +23,8 @@ class Graph {
     vector<VertexDegree> degrees;
     vector<vector<unsigned>> neighbors;
     // vector<int> &get_neighbors(int v);
+    
+    double sort_time;
 };
 
 #endif

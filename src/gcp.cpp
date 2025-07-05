@@ -53,6 +53,7 @@ unsigned first_fit(Graph &G) {
 }
 
 unsigned welsh_powel(Graph &G) {
+    
     return -1;
 }
 
