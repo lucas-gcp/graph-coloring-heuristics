@@ -1,11 +1,11 @@
 #include "graph.h"
 
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
-#include <algorithm>
 
 using namespace std;
 
@@ -44,6 +44,12 @@ Graph::Graph(ifstream &in_file) {
         degrees[u - 1].degree++;
         degrees[v - 1].degree++;
     }
+}
 
-    sort(degrees.begin(), degrees.end(), [](VertexDegree u, VertexDegree v) {return u.degree > v.degree;});
+double Graph::sortDegrees() {
+    auto t_start = chrono::high_resolution_clock::now();
+    sort(degrees.begin(), degrees.end(), [](VertexDegree u, VertexDegree v) { return u.degree > v.degree; });
+    auto t_end = chrono::high_resolution_clock::now();
+
+    return chrono::duration<double, milli>(t_end - t_start).count();
 }

@@ -5,7 +5,7 @@
 
 using ColoringFunctionT = unsigned (*)(Graph &G);
 
-void timer(const ColoringFunctionT &coloring_fn, Graph &G);
+void timer(const ColoringFunctionT &coloring_fn, Graph &G, double sort_time_consumption);
 
 unsigned first_fit(Graph &G);
 

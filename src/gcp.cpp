@@ -1,22 +1,22 @@
 #include "gcp.h"
 
 #include <chrono>
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 #include <vector>
 
 #include "graph.h"
 
 using namespace std;
 
-void timer(const ColoringFunctionT &coloring_fn, Graph &G) {
+void timer(const ColoringFunctionT &coloring_fn, Graph &G, double sort_time_consumption) {
     auto t_start = chrono::high_resolution_clock::now();
     auto num_colors = coloring_fn(G);
     auto t_end = chrono::high_resolution_clock::now();
 
     cout << num_colors << endl;
 
-    cout << fixed << setprecision(3) << chrono::duration<double, milli>(t_end - t_start).count() << endl;
+    cout << fixed << setprecision(3) << chrono::duration<double, milli>(t_end - t_start).count() + sort_time_consumption << endl;
 }
 
 unsigned first_fit(Graph &G) {
@@ -53,7 +53,6 @@ unsigned first_fit(Graph &G) {
 }
 
 unsigned welsh_powel(Graph &G) {
-    
     return -1;
 }
 

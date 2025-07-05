@@ -19,11 +19,13 @@ class Graph {
    public:
     Graph(ifstream &in_file);
 
+    double sortDegrees();
+
     unsigned n_vertices, n_edges;
     vector<VertexDegree> degrees;
     vector<vector<unsigned>> neighbors;
     // vector<int> &get_neighbors(int v);
-    
+
     double sort_time;
 };
 
