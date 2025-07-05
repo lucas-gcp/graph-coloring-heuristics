@@ -104,7 +104,32 @@ unsigned welsh_powel(Graph &G) {
 }
 
 unsigned ldo(Graph &G) {
+    int num_colors = 1;
+    vector<int> coloring(G.n_vertices, -1);
+    coloring[G.degrees[0].index] = 0;
     
+    bool usable_color;
+    for (unsigned u = 1; u < G.n_vertices; u++) {
+        unsigned index = G.degrees[u].index;
+        for (int i = 0; i < num_colors; i++) {
+            usable_color = true;
+            for (auto v : G.neighbors[index]) {
+                if (coloring[v] == i) {
+                    usable_color = false;
+                    break;
+                }
+            }
+            if (usable_color) {
+                coloring[index] = i;
+                break;
+            }
+        }
+        if (!usable_color) {
+            coloring[index] = num_colors;
+            num_colors++;
+        }
+    }
+    return num_colors;
 }
 
 /*
