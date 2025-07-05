@@ -10,6 +10,8 @@
 
 using namespace std;
 
+void delete_neighbors(Graph &G, forward_list<unsigned>::iterator vertex, forward_list<unsigned> &uncolored_vertices);
+
 void timer(const ColoringFunctionT &coloring_fn, Graph &G, double sort_time_consumption) {
     auto t_start = chrono::high_resolution_clock::now();
     auto num_colors = coloring_fn(G);
@@ -56,24 +58,47 @@ unsigned first_fit(Graph &G) {
 unsigned welsh_powel(Graph &G) {
     int num_colors = 0;
     forward_list<unsigned> uncolored;
+    vector<int> coloring(G.n_vertices, -1);
 
     for (int i = G.n_vertices - 1; i >= 0; i--) {
         uncolored.push_front(G.degrees[i].index);
     }
 
-    // for (auto u : uncolored) {
-    //     auto uncolored_vertex = *uncolored.begin();
+    while(!uncolored.empty()) {
+        num_colors++;
 
-    //     for (auto v : uncolored) {
-    //         if (G.adj_matrix[u][v] == 1) {
-    //             // uncolored.remove(1);
+        unsigned u = *uncolored.begin();
+        // delete_neighbors(G, uncolored.begin(), uncolored);
+        coloring[u] = num_colors-1;
+        uncolored.pop_front();
+        
+        auto curr = uncolored.begin();
+        auto prev = uncolored.before_begin();
+        while (curr != uncolored.end()) {
+            if (!G.adj_matrix[u][*curr]) {
+                delete_neighbors(G, curr, uncolored);
+                coloring[*curr] = num_colors-1;
+                uncolored.erase_after(prev);
+                curr = next(prev);
+            } else {
+                curr++;
+                prev++;
+            }
+        }
 
-    //             // v.remove()
-    //         }
-    //     }
+        uncolored.clear();
+        for (int i = G.n_vertices - 1; i >= 0; i--) {
+            if (coloring[G.degrees[i].index] == -1){
+                uncolored.push_front(G.degrees[i].index);
+                // cout << G.degrees[i].degree << " ";
+            }
+        }
 
-    //     num_colors++;
-    // }
+        // cout << "\nColor " << num_colors << endl;
+        // for (auto i : uncolored)
+        //     cout << i << " ";
+        // cout << endl;
+    }
 
     return num_colors;
 }
@@ -95,3 +120,17 @@ unsigned rlf(Graph &G) {
 
 }
 */
+
+void delete_neighbors(Graph &G, forward_list<unsigned>::iterator vertex, forward_list<unsigned> &uncolored_vertices) {
+    auto curr = next(vertex);
+    auto prev = vertex;
+    while (curr != uncolored_vertices.end()) {
+        if (G.adj_matrix[*vertex][*curr]) {
+            uncolored_vertices.erase_after(prev);
+            curr = next(prev);
+        } else {
+            curr++;
+            prev++;
+        }
+    }
+}
