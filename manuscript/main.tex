@@ -18,7 +18,8 @@
 
 \usepackage{hyperref}
 
-\usepackage{lipsum}
+\usepackage{booktabs}
+\usepackage{adjustbox}
 
 \usepackage[ruled]{algorithm2e}
 
@@ -85,8 +86,6 @@ Bla bla
 
 \begin{multicols*}{2}
 \section{Introdução}
-\lipsum
-
 
 \section{Algoritmos}
 
@@ -188,9 +187,10 @@ $v \gets V[1]$;
 
 
 \section{Experimentos computacionais}
-    \lipsum
+\input{results.tex}
+
 
 \section{Conclusão}
-
 \end{multicols*}
+
 \end{document}
