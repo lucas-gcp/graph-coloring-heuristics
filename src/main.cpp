@@ -31,6 +31,12 @@ int main(int argc, char* argv[]) {
     cout << " -=- Incidence Degree Ordering -=- " << endl;
     timer(ido, G, sort_time_consumption);
 
+    cout << " -=- Degree of Saturation -=- " << endl;
+    timer(dsatur, G, sort_time_consumption);
+
+    cout << " -=- Recursive Largest First -=- " << endl;
+    timer(rlf, G, sort_time_consumption);
+
     in_file.close();
     return 0;
 }

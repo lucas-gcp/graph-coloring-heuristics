@@ -1,4 +1,4 @@
-CPP = g++ -O3 -Wall -Wextra --pedantic
+CPP = g++ -g -O3 -Wall -Wextra --pedantic
 
 all: program
 

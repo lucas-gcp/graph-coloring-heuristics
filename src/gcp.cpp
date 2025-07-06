@@ -12,6 +12,10 @@ using namespace std;
 
 void delete_neighbors(Graph &G, forward_list<unsigned>::iterator vertex, forward_list<unsigned> &uncolored_vertices);
 
+void sorted_insertion(VertexDegree vertex, forward_list<VertexDegree> &U);
+
+forward_list<VertexDegree>::iterator max_degree_in_subgraph(Graph &G, forward_list<VertexDegree> &origin, forward_list<VertexDegree> &dest);
+
 void timer(const ColoringFunctionT &coloring_fn, Graph &G, double sort_time_consumption) {
     auto t_start = chrono::high_resolution_clock::now();
     auto num_colors = coloring_fn(G);
@@ -195,7 +199,7 @@ unsigned ldo(Graph &G) {
 }
 
 unsigned ido(Graph &G) {
-    int num_colors = 1;
+    int num_colors = 0;
     forward_list<VertexDegree> uncolored_vertices;
     vector<unsigned> colored_neighbors(G.n_vertices);
     vector<int> coloring(G.n_vertices, -1);
@@ -220,7 +224,7 @@ unsigned ido(Graph &G) {
             prev++;
         }
 
-        bool usable_color;
+        bool usable_color = false;
         for (int i = 0; i < num_colors; i++) {
             usable_color = true;
             for (auto neighbor : G.neighbors[selected->index]) {
@@ -245,19 +249,117 @@ unsigned ido(Graph &G) {
 
         uncolored_vertices.erase_after(before_selected);
     }
-    
+
     return num_colors;
 }
 
-/*
 unsigned dsatur(Graph &G) {
-    
+    int num_colors = 0;
+    forward_list<VertexDegree> uncolored_vertices;
+    vector<unsigned> num_neighboring_colors(G.n_vertices);
+    vector<int> coloring(G.n_vertices, -1);
+
+    for (int i = G.n_vertices - 1; i >= 0; i--) {
+        uncolored_vertices.push_front(G.degrees[i]);
+    }
+
+    while(!uncolored_vertices.empty()) {
+        auto curr = uncolored_vertices.begin();
+        auto prev = uncolored_vertices.before_begin();
+        
+        auto selected = curr;
+        auto before_selected = prev;
+
+        while (curr != uncolored_vertices.end()) {
+            if (num_neighboring_colors[curr->index] > num_neighboring_colors[selected->index]) {
+                selected = curr;
+                before_selected = prev;
+            }
+            curr++;
+            prev++;
+        }
+
+        bool usable_color = false;
+        for (int i = 0; i < num_colors; i++) {
+            usable_color = true;
+            for (auto neighbor : G.neighbors[selected->index]) {
+                if (coloring[neighbor] == i) {
+                    usable_color = false;
+                    break;
+                }
+            }
+            if (usable_color) {
+                coloring[selected->index] = i;
+                break;
+            }
+        }
+        if (!usable_color) {
+            coloring[selected->index] = num_colors;
+            num_colors++;
+            for (auto u : G.neighbors[selected->index])
+                num_neighboring_colors[u]++;
+        }
+
+        uncolored_vertices.erase_after(before_selected);
+    }
+
+    return num_colors;
 }
 
 unsigned rlf(Graph &G) {
-    
+    // 1. Set C := ∅, V ′ := V , U := ∅, q := 0.
+    unsigned num_colored_vertices = 0;
+    unsigned num_colors = 0;
+
+    forward_list<VertexDegree> V_;
+    forward_list<VertexDegree> U;
+    for (int i = G.n_vertices - 1; i >= 0; i--)
+        V_.push_front(G.degrees[i]);
+
+        
+    while (true) {
+        auto before_k = max_degree_in_subgraph(G, V_, V_);
+        auto k = next(before_k);
+        num_colors++;
+
+        while (true) {
+            // cout << (k == V_.end()) << endl;
+            auto curr = V_.begin();
+            auto prev = V_.before_begin();
+            while (curr != V_.end()) {
+                if (G.adj_matrix[k->index][curr->index]) {
+                    sorted_insertion(*curr, U);
+                    V_.erase_after(prev);
+                    curr = next(prev);
+                } else {
+                    curr++;
+                    prev++;
+                }
+            }
+            V_.erase_after(before_k);
+            num_colored_vertices++;
+
+            if (!V_.empty()) {
+                max_degree_in_subgraph(G, V_, U);
+                cout << (before_k == V_.end()) << endl;
+                k = next(before_k);
+                continue;
+            }
+
+            // cout << num_colors << endl;
+
+            if (num_colored_vertices == G.n_vertices)
+                return num_colors;
+
+            for (auto u : U)
+                V_.push_front(u);
+
+            U.clear();
+            cout << "=2=" << endl;
+            break;
+        }
+    }
 }
-*/
 
 void delete_neighbors(Graph &G, forward_list<unsigned>::iterator vertex, forward_list<unsigned> &uncolored_vertices) {
     auto curr = next(vertex);
@@ -271,4 +373,41 @@ void delete_neighbors(Graph &G, forward_list<unsigned>::iterator vertex, forward
             prev++;
         }
     }
+}
+
+void sorted_insertion(VertexDegree vertex, forward_list<VertexDegree> &U) {
+    if (U.empty()) {
+        U.push_front(vertex);
+        return;
+    }
+    
+    forward_list<VertexDegree>::iterator u, prev;
+    for (u = U.begin(), prev = U.before_begin(); u != U.end(); u++, prev++) {
+        if (u->degree > vertex.degree) {
+            break;
+        }
+    }
+    U.emplace_after(prev, vertex);
+}
+
+forward_list<VertexDegree>::iterator
+max_degree_in_subgraph(Graph &G,
+                       forward_list<VertexDegree> &origin,
+                       forward_list<VertexDegree> &dest)
+{
+    int max_degree = -1;
+    forward_list<VertexDegree>::iterator before_k;
+    for (auto v = origin.begin(), v_prev = origin.before_begin(); v != origin.end(); v++, v_prev++) {
+        int curr_degree = 0;
+        for (auto u : dest) {
+            if (G.adj_matrix[v->index][u.index])
+                curr_degree++;
+        }
+        if (curr_degree > max_degree) {
+            max_degree = curr_degree;
+            // cout << k->index << endl;
+            before_k = v_prev;
+        }
+    }
+    return before_k;
 }
