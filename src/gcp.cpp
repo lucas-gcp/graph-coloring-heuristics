@@ -1,8 +1,6 @@
 #include "gcp.h"
 
-#include <chrono>
 #include <forward_list>
-#include <iomanip>
 #include <iostream>
 #include <vector>
 
@@ -15,16 +13,6 @@ void delete_neighbors(Graph &G, forward_list<unsigned>::iterator vertex, forward
 void sorted_insertion(VertexDegree vertex, forward_list<VertexDegree> &U);
 
 forward_list<VertexDegree>::iterator max_degree_in_subgraph(Graph &G, forward_list<VertexDegree> &origin, forward_list<VertexDegree> &dest);
-
-void timer(const ColoringFunctionT &coloring_fn, Graph &G, double sort_time_consumption) {
-    auto t_start = chrono::high_resolution_clock::now();
-    auto num_colors = coloring_fn(G);
-    auto t_end = chrono::high_resolution_clock::now();
-
-    cout << num_colors << endl;
-
-    cout << fixed << setprecision(3) << chrono::duration<double, milli>(t_end - t_start).count() + sort_time_consumption << endl;
-}
 
 unsigned first_fit(Graph &G) {
     int num_colors = 1;
