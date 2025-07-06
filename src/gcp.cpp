@@ -64,20 +64,20 @@ unsigned welsh_powel(Graph &G) {
         uncolored.push_front(G.degrees[i].index);
     }
 
-    while(!uncolored.empty()) {
+    while (!uncolored.empty()) {
         num_colors++;
 
         unsigned u = *uncolored.begin();
         // delete_neighbors(G, uncolored.begin(), uncolored);
-        coloring[u] = num_colors-1;
+        coloring[u] = num_colors - 1;
         uncolored.pop_front();
-        
+
         auto curr = uncolored.begin();
         auto prev = uncolored.before_begin();
         while (curr != uncolored.end()) {
             if (!G.adj_matrix[u][*curr]) {
                 delete_neighbors(G, curr, uncolored);
-                coloring[*curr] = num_colors-1;
+                coloring[*curr] = num_colors - 1;
                 uncolored.erase_after(prev);
                 curr = next(prev);
             } else {
@@ -88,7 +88,7 @@ unsigned welsh_powel(Graph &G) {
 
         uncolored.clear();
         for (int i = G.n_vertices - 1; i >= 0; i--) {
-            if (coloring[G.degrees[i].index] == -1){
+            if (coloring[G.degrees[i].index] == -1) {
                 uncolored.push_front(G.degrees[i].index);
                 // cout << G.degrees[i].degree << " ";
             }
@@ -103,11 +103,73 @@ unsigned welsh_powel(Graph &G) {
     return num_colors;
 }
 
+unsigned welsh_powel_2(Graph &G) {
+    int active_color = 0;
+    vector<int> coloring(G.n_vertices, -1);
+
+    vector<VertexDegree> V_line(G.degrees);
+    V_line.reserve(G.n_vertices);
+
+    while (!V_line.empty()) {
+        // Step 2: The uncolored vertex that has the largest degree in the degree set 𝐷𝑒𝑔(𝑣𝑖) is selected for coloring
+        VertexDegree uncolored_vertex = V_line[0];
+
+        // Step 3: The selected vertex is colored with active color
+        coloring[uncolored_vertex.index] = active_color;
+        V_line.erase(V_line.begin());
+
+        // Step 3: After that, find the uncolored vertices from adjacency matrix which are not adjacent vertices of the colored vertex and these vertices are added to the 𝑉′ set ( 𝑉′ = {𝑣′1, 𝑣′2, … . , 𝑣′𝑛} ).
+        for (int neighbor_idx : G.neighbors[uncolored_vertex.index]) {
+            int V_line_size = V_line.size();
+
+            for (int i = 0; i < V_line_size; i++) {
+                if (V_line[i].index == neighbor_idx) {
+                    V_line.erase(V_line.begin() + i);
+                    break;
+                }
+            }
+        }
+
+        // The uncolored vertex that has the largest degree in the 𝑉 is selected for coloring. This vertex is colored with active color. After that, the adjacent vertices of the this vertex deleted from 𝑉′. This step is repeated until all vertices colored in the set of 𝑉′.
+        while (!V_line.empty()) {
+            VertexDegree largest_degree = V_line[0];
+            coloring[largest_degree.index] = active_color;
+            V_line.erase(V_line.begin());
+
+            for (int neighbor_idx : G.neighbors[largest_degree.index]) {
+                int V_line_size = V_line.size();
+
+                for (int i = 0; i < V_line_size; i++) {
+                    if (V_line[i].index == neighbor_idx) {
+                        V_line.erase(V_line.begin() + i);
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Reconstruct V_line as a fucking joke
+        for (int i = 0; i < G.degrees.size(); i++) {
+            int i_index = G.degrees[i].index;
+
+            if (coloring[i_index] == -1) {
+                V_line.push_back(G.degrees[i]);
+            }
+        }
+
+        active_color++;
+    }
+
+    cout << endl;
+
+    return active_color;
+}
+
 unsigned ldo(Graph &G) {
     int num_colors = 1;
     vector<int> coloring(G.n_vertices, -1);
     coloring[G.degrees[0].index] = 0;
-    
+
     bool usable_color;
     for (unsigned u = 1; u < G.n_vertices; u++) {
         unsigned index = G.degrees[u].index;
