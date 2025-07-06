@@ -194,17 +194,68 @@ unsigned ldo(Graph &G) {
     return num_colors;
 }
 
-/*
 unsigned ido(Graph &G) {
+    int num_colors = 1;
+    forward_list<VertexDegree> uncolored_vertices;
+    vector<unsigned> colored_neighbors(G.n_vertices);
+    vector<int> coloring(G.n_vertices, -1);
 
+    for (int i = G.n_vertices - 1; i >= 0; i--) {
+        uncolored_vertices.push_front(G.degrees[i]);
+    }
+
+    while(!uncolored_vertices.empty()) {
+        auto curr = uncolored_vertices.begin();
+        auto prev = uncolored_vertices.before_begin();
+        
+        auto selected = curr;
+        auto before_selected = prev;
+
+        while (curr != uncolored_vertices.end()) {
+            if (colored_neighbors[curr->index] > colored_neighbors[selected->index]) {
+                selected = curr;
+                before_selected = prev;
+            }
+            curr++;
+            prev++;
+        }
+
+        bool usable_color;
+        for (int i = 0; i < num_colors; i++) {
+            usable_color = true;
+            for (auto neighbor : G.neighbors[selected->index]) {
+                if (coloring[neighbor] == i) {
+                    usable_color = false;
+                    break;
+                }
+            }
+            if (usable_color) {
+                coloring[selected->index] = i;
+                break;
+            }
+        }
+        if (!usable_color) {
+            coloring[selected->index] = num_colors;
+            num_colors++;
+        }
+
+        for (auto u : G.neighbors[selected->index]) {
+            colored_neighbors[u]++;
+        }
+
+        uncolored_vertices.erase_after(before_selected);
+    }
+    
+    return num_colors;
 }
 
+/*
 unsigned dsatur(Graph &G) {
-
+    
 }
 
 unsigned rlf(Graph &G) {
-
+    
 }
 */
 

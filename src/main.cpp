@@ -22,11 +22,14 @@ int main(int argc, char* argv[]) {
     cout << " -=- First Fit -=- " << endl;
     timer(first_fit, G, 0);
 
-    // cout << " -=- Welsh Powel -=- " << endl;
-    // timer(welsh_powel, G, sort_time_consumption);
+    cout << " -=- Welsh Powel -=- " << endl;
+    timer(welsh_powel, G, sort_time_consumption);
 
     cout << " -=- Largest Degree Ordering -=- " << endl;
     timer(ldo, G, sort_time_consumption);
+
+    cout << " -=- Incidence Degree Ordering -=- " << endl;
+    timer(ido, G, sort_time_consumption);
 
     in_file.close();
     return 0;
