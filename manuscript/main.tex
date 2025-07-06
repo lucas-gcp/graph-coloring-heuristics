@@ -20,6 +20,8 @@
 
 \usepackage{lipsum}
 
+\usepackage[ruled]{algorithm2e}
+
 % ----------------------------
 % Updating section headers
 \usepackage{titlesec}
@@ -85,10 +87,110 @@ Bla bla
 \section{Introdução}
 \lipsum
 
-\subsection{Coisas}
 
-\lipsum
-\section{Metodologia}
-    
+\section{Algoritmos}
+
+
+% ------------------------------------------
+% First Fit Algorithm
+
+\begin{algorithm}[H]
+\caption{First Fit (FF)}
+\label{alg:ff}
+
+\KwData{Grafo $G(V,E)$}
+\KwResult{Coloração de $G$}
+
+$colors \gets \emptyset$\;
+$v \gets V[1]$;
+
+\end{algorithm}
+
+
+% ------------------------------------------
+% Welsh Powell Algorithm
+
+\begin{algorithm}[H]
+\caption{Welsh Powell (WP)}
+\label{alg:wp}
+
+\KwData{Grafo $G(V,E)$}
+\KwResult{Coloração de $G$}
+
+$colors \gets \emptyset$\;
+$v \gets V[1]$;
+
+\end{algorithm}
+
+
+% ------------------------------------------
+% Largest Degree Ordering Algorithm
+
+\begin{algorithm}[H]
+\caption{Largest Degree Ordering (LDO)}
+\label{alg:ldo}
+
+\KwData{Grafo $G(V,E)$}
+\KwResult{Coloração de $G$}
+
+$colors \gets \emptyset$\;
+$v \gets V[1]$;
+
+\end{algorithm}
+
+
+% ------------------------------------------
+% Incidence Degree Ordering Algorithm
+
+\begin{algorithm}[H]
+\caption{Incidence Degree Ordering (IDO)}
+\label{alg:ido}
+
+\KwData{Grafo $G(V,E)$}
+\KwResult{Coloração de $G$}
+
+$colors \gets \emptyset$\;
+$v \gets V[1]$;
+
+\end{algorithm}
+
+
+% ------------------------------------------
+% Degree of Saturation Algorithm
+
+\begin{algorithm}[H]
+\caption{Degree of Saturation (DSATUR)}
+\label{alg:dsatur}
+
+\KwData{Grafo $G(V,E)$}
+\KwResult{Coloração de $G$}
+
+$colors \gets \emptyset$\;
+$v \gets V[1]$;
+
+\end{algorithm}
+
+
+% ------------------------------------------
+% Recursive Largest First Algorithm
+
+\begin{algorithm}[H]
+\caption{Recursive Largest First (RLF)}
+\label{alg:rlf}
+
+\KwData{Grafo $G(V,E)$}
+\KwResult{Coloração de $G$}
+
+$colors \gets \emptyset$\;
+$v \gets V[1]$;
+
+\end{algorithm}
+
+
+\section{Experimentos computacionais}
+    \lipsum
+
+\section{Conclusão}
+
 \end{multicols*}
 \end{document}
