@@ -3,10 +3,6 @@
 
 #include "graph.h"
 
-using ColoringFunctionT = unsigned (*)(Graph &G);
-
-void timer(const ColoringFunctionT &coloring_fn, Graph &G, double sort_time_consumption);
-
 unsigned first_fit(Graph &G);
 
 unsigned welsh_powel(Graph &G);
@@ -15,7 +11,10 @@ unsigned ldo(Graph &G);
 
 unsigned ido(Graph &G);
 
+unsigned ido1(Graph &G);
+
 unsigned dsatur(Graph &G);
+unsigned dsatur1(Graph &G);
 
 unsigned rlf(Graph &G);
 

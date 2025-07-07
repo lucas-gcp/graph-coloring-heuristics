@@ -1,6 +1,7 @@
 #include "gcp.h"
 
 #include <forward_list>
+#include <list>
 #include <iostream>
 #include <vector>
 
@@ -157,7 +158,7 @@ unsigned welsh_powel_2(Graph &G) {
     return active_color;
 }
 
-unsigned ldo(Graph &G) {
+unsigned ldo2(Graph &G) {
     int num_colors = 1;
     vector<int> coloring(G.n_vertices, -1);
     coloring[G.degrees[0].index] = 0;
@@ -186,7 +187,94 @@ unsigned ldo(Graph &G) {
     return num_colors;
 }
 
+unsigned ldo(Graph &G) {
+    vector<int> coloring(G.n_vertices, -1);
+    list<VertexDegree> uncolored;
+    for (VertexDegree v : G.degrees)
+        uncolored.push_back(v);
+    
+    int num_colors = 0;
+
+    while (!uncolored.empty()) {
+        auto curr = uncolored.begin();
+        bool appropriate_color = false;
+        for (int i = 0; i < num_colors; i++) {
+            appropriate_color = true;
+            for (auto v : G.neighbors[curr->index]) {
+                if (coloring[v] == i) {
+                    appropriate_color = false;
+                    break;
+                }
+            }
+            if (appropriate_color) {
+                coloring[curr->index] = i;
+                break;
+            }
+        }
+        if (!appropriate_color) {
+            coloring[curr->index] = num_colors;
+            num_colors++;
+        }
+        uncolored.erase(curr);
+    }
+
+    return num_colors;
+}
+
 unsigned ido(Graph &G) {
+    vector<int> coloring(G.n_vertices, -1);
+    vector<int> colored_neighbors_count(G.n_vertices, 0);
+
+    list<VertexDegree> uncolored(G.degrees.begin(), G.degrees.end());
+    // for (VertexDegree v : G.degrees)
+    //     uncolored.push_back(v);
+
+    int num_colors = 1;
+
+    coloring[(uncolored.begin())->index] = 0;
+    for (auto u : G.neighbors[(uncolored.begin())->index])
+        colored_neighbors_count[u]++;
+
+    uncolored.erase(uncolored.begin());
+
+    while (!uncolored.empty()) {
+        list<VertexDegree>::iterator max_vertex;
+        int max_neighbors = -1;
+        for (auto u = uncolored.begin(); u != uncolored.end(); u++) {
+            if (colored_neighbors_count[u->index] > max_neighbors) {
+                max_vertex = u;
+                max_neighbors = colored_neighbors_count[u->index];
+            }
+        }
+        
+        bool appropriate_color;
+        for (int i = 0; i < num_colors; i++) {
+            appropriate_color = true;
+            for (auto u : G.neighbors[max_vertex->index]) {
+                if (coloring[u] == i) {
+                    appropriate_color = false;
+                    break;
+                }
+            }
+            if (appropriate_color) {
+                coloring[max_vertex->index] = i;
+                break;
+            }
+        }
+        if (!appropriate_color) {
+            coloring[max_vertex->index] = num_colors;
+            num_colors++;
+        }
+
+        for (auto u : G.neighbors[max_vertex->index])
+            colored_neighbors_count[u]++;
+
+        uncolored.erase(max_vertex);
+    }
+    return num_colors;
+}
+
+unsigned ido1(Graph &G) {
     int num_colors = 0;
     forward_list<VertexDegree> uncolored_vertices;
     vector<unsigned> colored_neighbors(G.n_vertices);
@@ -242,9 +330,71 @@ unsigned ido(Graph &G) {
 }
 
 unsigned dsatur(Graph &G) {
+    list<VertexDegree> uncolored_vertices(G.degrees.begin(), G.degrees.end());
+    vector<unsigned> num_neighboring_colors(G.n_vertices, 0);
+    vector<int> coloring(G.n_vertices, -1);
+
+    int num_colors = 1;
+
+    coloring[(uncolored_vertices.begin())->index] = 0;
+    for (auto u : G.neighbors[(uncolored_vertices.begin())->index])
+        num_neighboring_colors[u]++;
+
+    uncolored_vertices.erase(uncolored_vertices.begin());
+
+    while(!uncolored_vertices.empty()) {
+        list<VertexDegree>::iterator max_vertex = uncolored_vertices.begin();
+        unsigned max_neighbors = -1;
+        for (auto u = uncolored_vertices.begin(); u != uncolored_vertices.end(); u++) {
+            if (num_neighboring_colors[u->index] > max_neighbors) {
+                max_vertex = u;
+                max_neighbors = num_neighboring_colors[u->index];
+            }
+        }
+        
+        bool appropriate_color;
+        int i;
+        for (i = 0; i < num_colors; i++) {
+            appropriate_color = true;
+            for (auto u : G.neighbors[max_vertex->index]) {
+                if (coloring[u] == i) {
+                    appropriate_color = false;
+                    break;
+                }
+            }
+            if (appropriate_color) {
+                break;
+            }
+        }
+        if (!appropriate_color) {
+            num_colors++;
+            for (auto u : G.neighbors[max_vertex->index])
+                num_neighboring_colors[u]++;
+        } else {
+            bool adjacent_color; 
+            for (auto u : G.neighbors[max_vertex->index]) {
+                adjacent_color = false;
+                for (auto v : G.neighbors[u]) {
+                    if (coloring[v] == i) {
+                        adjacent_color = true;
+                        break;
+                    }
+                }
+                if (!adjacent_color)
+                    num_neighboring_colors[u]++;
+            }
+        }
+        coloring[max_vertex->index] = i;
+        uncolored_vertices.erase(max_vertex);
+    }
+    return num_colors;
+}
+
+
+unsigned dsatur1(Graph &G) {
     int num_colors = 0;
     forward_list<VertexDegree> uncolored_vertices;
-    vector<unsigned> num_neighboring_colors(G.n_vertices);
+    vector<unsigned> num_neighboring_colors(G.n_vertices, 0);
     vector<int> coloring(G.n_vertices, -1);
 
     for (int i = G.n_vertices - 1; i >= 0; i--) {
@@ -252,11 +402,11 @@ unsigned dsatur(Graph &G) {
     }
 
     while(!uncolored_vertices.empty()) {
-        auto curr = uncolored_vertices.begin();
-        auto prev = uncolored_vertices.before_begin();
+        auto selected = uncolored_vertices.begin();
+        auto before_selected = uncolored_vertices.before_begin();
         
-        auto selected = curr;
-        auto before_selected = prev;
+        auto curr = selected;
+        auto prev = before_selected;
 
         while (curr != uncolored_vertices.end()) {
             if (num_neighboring_colors[curr->index] > num_neighboring_colors[selected->index]) {

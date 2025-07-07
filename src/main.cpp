@@ -11,7 +11,9 @@
 using namespace std;
 namespace fs = filesystem;
 
+using ColoringFunctionT = unsigned (*)(Graph &G);
 void timer(const ColoringFunctionT &coloring_fn, Graph &G, double sort_time_consumption, int &num_colors, double &time);
+
 void run_graph_benchmark(fs::path graph_filepath, ofstream &benchmark_csv);
 
 int main(int argc, char* argv[]) {
@@ -75,24 +77,32 @@ void run_graph_benchmark(fs::path graph_filepath, ofstream &benchmark_csv) {
 
     benchmark_csv << graph_name << "," << G.n_vertices << "," << G.n_edges << ","; 
 
-    cout << "First Fit: ";
-    timer(first_fit, G, 0, num_colors, time);
-    benchmark_csv << num_colors << "," << time << ",";
+    // cout << "First Fit: ";
+    // timer(first_fit, G, 0, num_colors, time);
+    // benchmark_csv << num_colors << "," << time << ",";
 
-    cout << "Welsh Powel: ";
-    timer(welsh_powel, G, sort_time_consumption, num_colors, time);
-    benchmark_csv << num_colors << "," << time << ",";
+    // cout << "Welsh Powel: ";
+    // timer(welsh_powel, G, sort_time_consumption, num_colors, time);
+    // benchmark_csv << num_colors << "," << time << ",";
 
-    cout << "Largest Degree Ordering: ";
-    timer(ldo, G, sort_time_consumption, num_colors, time);
-    benchmark_csv << num_colors << "," << time << ",";
+    // cout << "Largest Degree Ordering: ";
+    // timer(ldo, G, sort_time_consumption, num_colors, time);
+    // benchmark_csv << num_colors << "," << time << ",";
 
-    cout << "Incidence Degree Ordering: ";
-    timer(ido, G, sort_time_consumption, num_colors, time);
-    benchmark_csv << num_colors << "," << time << ",";
+    // cout << "Incidence Degree Ordering: ";
+    // timer(ido, G, sort_time_consumption, num_colors, time);
+    // benchmark_csv << num_colors << "," << time << ",";
+
+    // cout << "Incidence Degree Ordering 2: ";
+    // timer(ido1, G, sort_time_consumption, num_colors, time);
+    // benchmark_csv << num_colors << "," << time << ",";
 
     cout << "Degree of Saturation: ";
     timer(dsatur, G, sort_time_consumption, num_colors, time);
+    benchmark_csv << num_colors << "," << time << ",";
+
+    cout << "Degree of Saturation 2: ";
+    timer(dsatur1, G, sort_time_consumption, num_colors, time);
     benchmark_csv << num_colors << "," << time << ",";
 
     // cout << "Recursive Largest First: ";
