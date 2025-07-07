@@ -5,3 +5,4 @@ program
 
 manuscript/*
 !manuscript/main.tex
+!manuscript/results.tex
