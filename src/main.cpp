@@ -16,7 +16,7 @@ void timer(const ColoringFunctionT &coloring_fn, Graph &G, double sort_time_cons
 
 void run_graph_benchmark(fs::path graph_filepath, ofstream &benchmark_csv);
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
     if (argc > 2) {
         cout << "Wrong args" << endl;
         return 1;
@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
     fs::path benchmark_dir = root_dir / "benchmark";
     fs::path out_dir = root_dir / "out";
 
-    if(!fs::exists(out_dir))
+    if (!fs::exists(out_dir))
         fs::create_directory(out_dir);
 
     if (argc == 2) {
@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
         fs::path graph_filepath = argv[1];
 
         run_graph_benchmark(graph_filepath, benchmark_csv);
-        
+
         return 0;
     }
 
@@ -49,7 +49,7 @@ int main(int argc, char* argv[]) {
                   << "dsatur_sol,dsatur_time,"
                   << "rlf_sol,rlf_time" << endl;
 
-    for (auto const& graph_entry : fs::directory_iterator{benchmark_dir}) {
+    for (auto const &graph_entry : fs::directory_iterator{benchmark_dir}) {
         run_graph_benchmark(graph_entry.path(), benchmark_csv);
     }
 
@@ -59,10 +59,10 @@ int main(int argc, char* argv[]) {
 }
 
 void run_graph_benchmark(fs::path graph_filepath, ofstream &benchmark_csv) {
-    string::iterator name_end, name_start;
+    string::iterator name_end;
     string graph_filename = graph_filepath.filename().string();
     for (name_end = graph_filename.end(); *name_end != '.'; name_end--);
-    
+
     string graph_name(graph_filename.begin(), name_end);
     cout << "\n=================" << endl;
     cout << graph_name << endl;
@@ -75,27 +75,27 @@ void run_graph_benchmark(fs::path graph_filepath, ofstream &benchmark_csv) {
     int num_colors;
     double time;
 
-    benchmark_csv << graph_name << "," << G.n_vertices << "," << G.n_edges << ","; 
+    benchmark_csv << graph_name << "," << G.n_vertices << "," << G.n_edges << ",";
 
-    // cout << "First Fit: ";
-    // timer(first_fit, G, 0, num_colors, time);
-    // benchmark_csv << num_colors << "," << time << ",";
+    cout << "First Fit: ";
+    timer(first_fit, G, 0, num_colors, time);
+    benchmark_csv << num_colors << "," << time << ",";
 
-    // cout << "Welsh Powel: ";
-    // timer(welsh_powel, G, sort_time_consumption, num_colors, time);
-    // benchmark_csv << num_colors << "," << time << ",";
+    cout << "Welsh Powel: ";
+    timer(welsh_powel, G, sort_time_consumption, num_colors, time);
+    benchmark_csv << num_colors << "," << time << ",";
 
-    // cout << "Largest Degree Ordering: ";
-    // timer(ldo, G, sort_time_consumption, num_colors, time);
-    // benchmark_csv << num_colors << "," << time << ",";
+    cout << "Largest Degree Ordering: ";
+    timer(ldo, G, sort_time_consumption, num_colors, time);
+    benchmark_csv << num_colors << "," << time << ",";
 
-    // cout << "Incidence Degree Ordering: ";
-    // timer(ido, G, sort_time_consumption, num_colors, time);
-    // benchmark_csv << num_colors << "," << time << ",";
+    cout << "Incidence Degree Ordering: ";
+    timer(ido, G, sort_time_consumption, num_colors, time);
+    benchmark_csv << num_colors << "," << time << ",";
 
-    // cout << "Incidence Degree Ordering 2: ";
-    // timer(ido1, G, sort_time_consumption, num_colors, time);
-    // benchmark_csv << num_colors << "," << time << ",";
+    cout << "Incidence Degree Ordering 2: ";
+    timer(ido1, G, sort_time_consumption, num_colors, time);
+    benchmark_csv << num_colors << "," << time << ",";
 
     cout << "Degree of Saturation: ";
     timer(dsatur, G, sort_time_consumption, num_colors, time);
@@ -105,12 +105,12 @@ void run_graph_benchmark(fs::path graph_filepath, ofstream &benchmark_csv) {
     timer(dsatur1, G, sort_time_consumption, num_colors, time);
     benchmark_csv << num_colors << "," << time << ",";
 
-    // cout << "Recursive Largest First: ";
-    // timer(rlf, G, sort_time_consumption, num_colors, time);
-    // benchmark_csv << num_colors << "," << time << ",";
+    cout << "Recursive Largest First: ";
+    timer(rlf, G, sort_time_consumption, num_colors, time);
+    benchmark_csv << num_colors << "," << time;
 
     benchmark_csv << endl;
-    
+
     in_file.close();
 }
 

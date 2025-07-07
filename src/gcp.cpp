@@ -11,9 +11,9 @@ using namespace std;
 
 void delete_neighbors(Graph &G, forward_list<unsigned>::iterator vertex, forward_list<unsigned> &uncolored_vertices);
 
-void sorted_insertion(VertexDegree vertex, forward_list<VertexDegree> &U);
+void sorted_insertion(VertexDegree vertex, list<VertexDegree> &U);
 
-forward_list<VertexDegree>::iterator max_degree_in_subgraph(Graph &G, forward_list<VertexDegree> &origin, forward_list<VertexDegree> &dest);
+list<VertexDegree>::iterator max_degree_in_subgraph(Graph &G, list<VertexDegree> &origin, list<VertexDegree> &dest);
 
 unsigned first_fit(Graph &G) {
     int num_colors = 1;
@@ -448,37 +448,33 @@ unsigned rlf(Graph &G) {
     unsigned num_colored_vertices = 0;
     unsigned num_colors = 0;
 
-    forward_list<VertexDegree> V_;
-    forward_list<VertexDegree> U;
+    list<VertexDegree> V_;
+    list<VertexDegree> U;
     for (int i = G.n_vertices - 1; i >= 0; i--)
         V_.push_front(G.degrees[i]);
 
     while (true) {
-        auto before_k = max_degree_in_subgraph(G, V_, V_);
-        auto k = next(before_k);
+        // auto before_k = max_degree_in_subgraph(G, V_, V_);
+        auto k = max_degree_in_subgraph(G, V_, V_);
         num_colors++;
 
         while (true) {
-            // cout << (k == V_.end()) << endl;
             auto curr = V_.begin();
-            auto prev = V_.before_begin();
+
             while (curr != V_.end()) {
-                if (G.adj_matrix[k->index][curr->index]) {
+                if (G.adj_matrix[k->index][curr->index] == 1) {
                     sorted_insertion(*curr, U);
-                    V_.erase_after(prev);
-                    curr = next(prev);
+                    V_.erase(prev(++curr));
                 } else {
                     curr++;
-                    prev++;
                 }
             }
-            V_.erase_after(before_k);
+
+            V_.erase(k);
             num_colored_vertices++;
 
             if (!V_.empty()) {
-                max_degree_in_subgraph(G, V_, U);
-                cout << (before_k == V_.end()) << endl;
-                k = next(before_k);
+                k = max_degree_in_subgraph(G, V_, U);
                 continue;
             }
 
@@ -491,7 +487,7 @@ unsigned rlf(Graph &G) {
                 V_.push_front(u);
 
             U.clear();
-            cout << "=2=" << endl;
+            // cout << "=2=" << endl;
             break;
         }
     }
@@ -511,29 +507,29 @@ void delete_neighbors(Graph &G, forward_list<unsigned>::iterator vertex, forward
     }
 }
 
-void sorted_insertion(VertexDegree vertex, forward_list<VertexDegree> &U) {
+void sorted_insertion(VertexDegree vertex, list<VertexDegree> &U) {
     if (U.empty()) {
         U.push_front(vertex);
         return;
     }
 
-    forward_list<VertexDegree>::iterator u, prev;
-    for (u = U.begin(), prev = U.before_begin(); u != U.end(); u++, prev++) {
+    list<VertexDegree>::iterator u;
+    for (u = U.begin(); u != U.end(); u++) {
         if (u->degree > vertex.degree) {
             break;
         }
     }
-    U.emplace_after(prev, vertex);
+
+    U.emplace(u, vertex);
 }
 
-forward_list<VertexDegree>::iterator
-max_degree_in_subgraph(Graph &G,
-                       forward_list<VertexDegree> &origin,
-                       forward_list<VertexDegree> &dest) {
+list<VertexDegree>::iterator max_degree_in_subgraph(Graph &G,
+                                                    list<VertexDegree> &origin,
+                                                    list<VertexDegree> &dest) {
     int max_degree = -1;
-    forward_list<VertexDegree>::iterator before_k;
+    list<VertexDegree>::iterator k;
 
-    for (auto v = origin.begin(), v_prev = origin.before_begin(); v != origin.end(); v++, v_prev++) {
+    for (auto v = origin.begin(); v != origin.end(); v++) {
         int curr_degree = 0;
 
         for (auto u : dest) {
@@ -544,9 +540,9 @@ max_degree_in_subgraph(Graph &G,
         if (curr_degree > max_degree) {
             max_degree = curr_degree;
             // cout << k->index << endl;
-            before_k = v_prev;
+            k = v;
         }
     }
 
-    return before_k;
+    return k;
 }
