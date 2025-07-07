@@ -1,8 +1,8 @@
 #include "gcp.h"
 
 #include <forward_list>
-#include <list>
 #include <iostream>
+#include <list>
 #include <vector>
 
 #include "graph.h"
@@ -112,10 +112,10 @@ unsigned welsh_powel_2(Graph &G) {
         V_line.erase(V_line.begin());
 
         // Step 3: After that, find the uncolored vertices from adjacency matrix which are not adjacent vertices of the colored vertex and these vertices are added to the 𝑉′ set ( 𝑉′ = {𝑣′1, 𝑣′2, … . , 𝑣′𝑛} ).
-        for (int neighbor_idx : G.neighbors[uncolored_vertex.index]) {
-            int V_line_size = V_line.size();
+        for (unsigned neighbor_idx : G.neighbors[uncolored_vertex.index]) {
+            unsigned int V_line_size = V_line.size();
 
-            for (int i = 0; i < V_line_size; i++) {
+            for (unsigned int i = 0; i < V_line_size; i++) {
                 if (V_line[i].index == neighbor_idx) {
                     V_line.erase(V_line.begin() + i);
                     break;
@@ -129,10 +129,10 @@ unsigned welsh_powel_2(Graph &G) {
             coloring[largest_degree.index] = active_color;
             V_line.erase(V_line.begin());
 
-            for (int neighbor_idx : G.neighbors[largest_degree.index]) {
-                int V_line_size = V_line.size();
+            for (unsigned int neighbor_idx : G.neighbors[largest_degree.index]) {
+                unsigned V_line_size = V_line.size();
 
-                for (int i = 0; i < V_line_size; i++) {
+                for (unsigned int i = 0; i < V_line_size; i++) {
                     if (V_line[i].index == neighbor_idx) {
                         V_line.erase(V_line.begin() + i);
                         break;
@@ -142,7 +142,7 @@ unsigned welsh_powel_2(Graph &G) {
         }
 
         // Reconstruct V_line as a fucking joke
-        for (int i = 0; i < G.degrees.size(); i++) {
+        for (unsigned i = 0; i < G.degrees.size(); i++) {
             int i_index = G.degrees[i].index;
 
             if (coloring[i_index] == -1) {
@@ -192,7 +192,7 @@ unsigned ldo(Graph &G) {
     list<VertexDegree> uncolored;
     for (VertexDegree v : G.degrees)
         uncolored.push_back(v);
-    
+
     int num_colors = 0;
 
     while (!uncolored.empty()) {
@@ -246,7 +246,7 @@ unsigned ido(Graph &G) {
                 max_neighbors = colored_neighbors_count[u->index];
             }
         }
-        
+
         bool appropriate_color;
         for (int i = 0; i < num_colors; i++) {
             appropriate_color = true;
@@ -284,10 +284,10 @@ unsigned ido1(Graph &G) {
         uncolored_vertices.push_front(G.degrees[i]);
     }
 
-    while(!uncolored_vertices.empty()) {
+    while (!uncolored_vertices.empty()) {
         auto curr = uncolored_vertices.begin();
         auto prev = uncolored_vertices.before_begin();
-        
+
         auto selected = curr;
         auto before_selected = prev;
 
@@ -342,7 +342,7 @@ unsigned dsatur(Graph &G) {
 
     uncolored_vertices.erase(uncolored_vertices.begin());
 
-    while(!uncolored_vertices.empty()) {
+    while (!uncolored_vertices.empty()) {
         list<VertexDegree>::iterator max_vertex = uncolored_vertices.begin();
         unsigned max_neighbors = -1;
         for (auto u = uncolored_vertices.begin(); u != uncolored_vertices.end(); u++) {
@@ -351,7 +351,7 @@ unsigned dsatur(Graph &G) {
                 max_neighbors = num_neighboring_colors[u->index];
             }
         }
-        
+
         bool appropriate_color;
         int i;
         for (i = 0; i < num_colors; i++) {
@@ -371,7 +371,7 @@ unsigned dsatur(Graph &G) {
             for (auto u : G.neighbors[max_vertex->index])
                 num_neighboring_colors[u]++;
         } else {
-            bool adjacent_color; 
+            bool adjacent_color;
             for (auto u : G.neighbors[max_vertex->index]) {
                 adjacent_color = false;
                 for (auto v : G.neighbors[u]) {
@@ -390,7 +390,6 @@ unsigned dsatur(Graph &G) {
     return num_colors;
 }
 
-
 unsigned dsatur1(Graph &G) {
     int num_colors = 0;
     forward_list<VertexDegree> uncolored_vertices;
@@ -401,10 +400,10 @@ unsigned dsatur1(Graph &G) {
         uncolored_vertices.push_front(G.degrees[i]);
     }
 
-    while(!uncolored_vertices.empty()) {
+    while (!uncolored_vertices.empty()) {
         auto selected = uncolored_vertices.begin();
         auto before_selected = uncolored_vertices.before_begin();
-        
+
         auto curr = selected;
         auto prev = before_selected;
 
@@ -454,7 +453,6 @@ unsigned rlf(Graph &G) {
     for (int i = G.n_vertices - 1; i >= 0; i--)
         V_.push_front(G.degrees[i]);
 
-        
     while (true) {
         auto before_k = max_degree_in_subgraph(G, V_, V_);
         auto k = next(before_k);
@@ -518,7 +516,7 @@ void sorted_insertion(VertexDegree vertex, forward_list<VertexDegree> &U) {
         U.push_front(vertex);
         return;
     }
-    
+
     forward_list<VertexDegree>::iterator u, prev;
     for (u = U.begin(), prev = U.before_begin(); u != U.end(); u++, prev++) {
         if (u->degree > vertex.degree) {
@@ -531,21 +529,24 @@ void sorted_insertion(VertexDegree vertex, forward_list<VertexDegree> &U) {
 forward_list<VertexDegree>::iterator
 max_degree_in_subgraph(Graph &G,
                        forward_list<VertexDegree> &origin,
-                       forward_list<VertexDegree> &dest)
-{
+                       forward_list<VertexDegree> &dest) {
     int max_degree = -1;
     forward_list<VertexDegree>::iterator before_k;
+
     for (auto v = origin.begin(), v_prev = origin.before_begin(); v != origin.end(); v++, v_prev++) {
         int curr_degree = 0;
+
         for (auto u : dest) {
             if (G.adj_matrix[v->index][u.index])
                 curr_degree++;
         }
+
         if (curr_degree > max_degree) {
             max_degree = curr_degree;
             // cout << k->index << endl;
             before_k = v_prev;
         }
     }
+
     return before_k;
 }
