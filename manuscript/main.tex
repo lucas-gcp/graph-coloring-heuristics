@@ -1,6 +1,5 @@
 \documentclass[10pt]{article}
 
-
 \usepackage{geometry}
 \geometry{left=1.7cm,right=1.7cm, top=1.7cm, bottom=1.7cm}
 
@@ -13,6 +12,8 @@
 \usepackage{newtxtext}
 \usepackage{newtxmath}
 \usepackage{courier}
+
+\usepackage{xcolor}
 
 \usepackage[brazil]{babel}
 
@@ -34,6 +35,17 @@
 \renewcommand{\thesubsection}{\Alph{subsection}.}
 \titleformat{\subsection}
 {\itshape}{\thesubsection}{1em}{}
+
+% ----------------------------
+% Updating captions
+\addto\captionsbrazil{\renewcommand{\tablename}{\sc Table}}
+\usepackage[labelsep=newline, font={footnotesize, sc}]{caption}
+
+% ----------------------------
+% Declaring math operations
+\usepackage{amsmath}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
 
 % ----------------------------
 % Updating title and authors
@@ -87,8 +99,25 @@ Bla bla
 \begin{multicols*}{2}
 \section{Introdução}
 
-\section{Algoritmos}
+O problema de coloração de vértices, ou \emph{Graph Coloring Problem} (GCP), é
+conhecido como um problema clássico na computação, apesar de postulado muito 
+antes do concebimento da ideia de computadores. 
+O problema consiste em colorir todos os vértices de um determinado grafo com o 
+menor número de cores possível sem que haja nenhum vizinho da mesma cor. 
+A natureza do problema caracteriza-se dentro da categoria de NP-Difícil [1], 
+contudo existem diversos algoritmos que tentam abordá-lo de diferentes formas 
+para obter um resultado eficiente. Dentro dessas soluções, as heurísticas se
+destacam pela rapidez enquanto seus resultados se aproximam do resultado ótimo.
 
+Com isso, o artigo se centrará em testar seis diferentes algoritmos heurísticos 
+seguindo a descrição do artigo de referência, criando comparações por meio de 
+tabelas e gráficos. Os algoritmos são: \emph{First Fit}~(FF),
+\emph{Welsh Powell}~(WP), \emph{Largest Degree Ordering}~(LDO),
+\emph{Incidence Degree Ordering}~(IDO), \emph{Degree of Saturation}~(DSATUR)
+e \emph{Recursive Largest First}~(RLF).
+
+\section{Algoritmos}
+Nesta seção serão apresentados os algoritmos em pseudo-código.
 
 % ------------------------------------------
 % First Fit Algorithm
@@ -100,8 +129,24 @@ Bla bla
 \KwData{Grafo $G(V,E)$}
 \KwResult{Coloração de $G$}
 
-$colors \gets \emptyset$\;
-$v \gets V[1]$;
+\emph{cores} $\gets \emptyset$\;
+$n \gets 0$\;
+$C(v) \gets$ NULL, $\forall v \in V$\;
+
+\ForEach{$v \in V$} {
+    \ForEach{$c \in$ cores} {
+        \If{$c \notin C\left(N(v)\right)$} {
+            $C(v) \gets c$\;
+            break;
+        }
+    }
+    \If{$C(v) = $ \textnormal{NULL}}{
+        $n \gets n+1$\;
+        \emph{cores} $\gets$ \emph{cores} $\cup \{ c_n \}$\;
+        $C(v) \gets c_n$\;
+    }
+}
+\Return{$C$}\;
 
 \end{algorithm}
 
@@ -116,8 +161,27 @@ $v \gets V[1]$;
 \KwData{Grafo $G(V,E)$}
 \KwResult{Coloração de $G$}
 
-$colors \gets \emptyset$\;
-$v \gets V[1]$;
+
+\emph{cores} $\gets \{c_1\}$\;
+$n \gets 1$\;
+
+$C(v) \gets$ NULL, $\forall v \in V$\;
+
+$v \gets \argmax_{v \in V} d_G(v)$\;
+uncolored $\gets V \setminus \{v\}$\;
+
+\While{uncolored $\neq \emptyset$}{
+    $V' \gets$ uncolored $\setminus N(v)$\;
+    \While{$V' \neq \emptyset$}{
+        $v \gets \argmax_{v \in V'} d_G(v)$\;
+        $C(v) \gets c_n$\;
+        uncolored $\gets$ uncolored $\setminus \{v\}$\;
+        $V' \gets V' \setminus N(v)$\;
+    }
+    $n \gets n + 1$\;
+}
+
+\Return{$C$}\;
 
 \end{algorithm}
 
@@ -132,8 +196,27 @@ $v \gets V[1]$;
 \KwData{Grafo $G(V,E)$}
 \KwResult{Coloração de $G$}
 
-$colors \gets \emptyset$\;
-$v \gets V[1]$;
+\emph{cores} $\gets \emptyset$\;
+$n \gets 0$\;
+
+$C(v) \gets$ NULL, $\forall v \in V$\;
+$V' \gets V$\;
+Coloque $V'$ em ordem decrescente de graus dos vértices\;
+
+\ForEach{$v \in V'$} {
+    \ForEach{$c \in$ cores} {
+        \If{$c \notin C(N(v))$}{
+            $C(v) \gets c$\;
+            break; 
+        }
+    }
+    \If{$C(v) = $ \textnormal{NULL}}{
+        $n \gets n+1$\;
+        \emph{cores} $\gets$ \emph{cores} $\cup \{ c_n \}$\;
+        $C(v) \gets c_n$\;
+    }
+}
+\Return{$C$}\;
 
 \end{algorithm}
 
@@ -148,8 +231,38 @@ $v \gets V[1]$;
 \KwData{Grafo $G(V,E)$}
 \KwResult{Coloração de $G$}
 
-$colors \gets \emptyset$\;
-$v \gets V[1]$;
+\emph{cores} $\gets \emptyset$\;
+$n \gets 0$\;
+
+$C(v) \gets$ NULL, $\forall v \in V$\;
+$CN(v) \gets$ 0, $\forall v \in V$\;
+
+
+$V' \gets V$\;
+Coloque $V'$ em ordem decrescente de graus dos vértices\;
+
+\While{$V' \neq \emptyset$}{
+   \textcolor{red}{$v \gets \argmax_{v \in V'}CN(v)$}\; % Mudar, não gostei
+    
+    \ForEach{$c \in$ cores} {
+        \If{$c \notin C(N(v))$}{
+            $C(v) \gets c$\;
+            break;
+        }
+    }
+    \If{$C(v) = $ \textnormal{NULL}}{
+        $n \gets n+1$\;
+        \emph{cores} $\gets$ \emph{cores} $\cup \{ c_n \}$\;
+        $C(v) \gets c_n$\;
+    }
+
+    \ForEach{$u \in N(v)$}{
+        $CN(u) \gets CN(u) + 1$\; 
+    }
+
+    $V' \gets V' \setminus \{v\}$\;
+}
+\Return{$C$}\;
 
 \end{algorithm}
 
@@ -164,8 +277,32 @@ $v \gets V[1]$;
 \KwData{Grafo $G(V,E)$}
 \KwResult{Coloração de $G$}
 
-$colors \gets \emptyset$\;
-$v \gets V[1]$;
+\emph{cores} $\gets \emptyset$\;
+$n \gets 0$\;
+
+$C(v) \gets$ NULL, $\forall v \in V$\;
+
+$V' \gets V$\;
+Coloque $V'$ em ordem decrescente de graus dos vértices\;
+
+\While{$V' \neq \emptyset$}{
+   \textcolor{red}{$v \gets \argmax_{v \in V'}|C(N(v))|$}\; % Mudar, não gostei
+    
+    \ForEach{$c \in$ cores} {
+        \If{$c \notin C(N(v))$}{
+            $C(v) \gets c$\;
+            break;
+        }
+    }
+    \If{$C(v) = $ \textnormal{NULL}}{
+        $n \gets n+1$\;
+        \emph{cores} $\gets$ \emph{cores} $\cup \{ c_n \}$\;
+        $C(v) \gets c_n$\;
+    }
+
+    $V' \gets V' \setminus \{v\}$\;
+}
+\Return{$C$}\;
 
 \end{algorithm}
 
@@ -187,10 +324,20 @@ $v \gets V[1]$;
 
 
 \section{Experimentos computacionais}
-\input{results.tex}
+Nessa seção serão apresentados os resultados obtidos pela implementação.
 
+Os algoritmos foram implementados usando a linguagem C++ e os experimentos foram
+rodados em um computador com processador AMD~Ryzen~5~3600XT e com 16 GB de memória.
+\input{results.tex}.
+
+Para comparar os algoritmos, foram usados grafos da base \emph{DIMACS}.
+A Tabela~\ref{tab:experiments} apresenta as informações de cada grafo, bem como
+os dados da execução de cada algoritmo, identificados pela abreviação do 
+algoritmo, que incluem a solução incumbente (K) e o tempo de execução (T), em
+milissegundos.
 
 \section{Conclusão}
+
 \end{multicols*}
 
 \end{document}

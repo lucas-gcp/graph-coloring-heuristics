@@ -93,16 +93,8 @@ void run_graph_benchmark(fs::path graph_filepath, ofstream &benchmark_csv) {
     timer(ido, G, sort_time_consumption, num_colors, time);
     benchmark_csv << num_colors << "," << time << ",";
 
-    cout << "Incidence Degree Ordering 2: ";
-    timer(ido1, G, sort_time_consumption, num_colors, time);
-    benchmark_csv << num_colors << "," << time << ",";
-
     cout << "Degree of Saturation: ";
     timer(dsatur, G, sort_time_consumption, num_colors, time);
-    benchmark_csv << num_colors << "," << time << ",";
-
-    cout << "Degree of Saturation 2: ";
-    timer(dsatur1, G, sort_time_consumption, num_colors, time);
     benchmark_csv << num_colors << "," << time << ",";
 
     cout << "Recursive Largest First: ";
