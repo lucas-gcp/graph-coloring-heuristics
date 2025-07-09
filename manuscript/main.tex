@@ -113,11 +113,10 @@ O Problema da Coloração de Vértices é um problema clássico em grafos.
 Ele consiste em colorir o grafo com o menor número possível de cores de modo que
 dois vértices adjacentes não compartilhem a mesma cor. Este problema é NP-difícil,
 logo, o presente trabalho objetiva estudar a coloração de grafos por meio de heurísticas.
-Os algoritmos: \emph{First Fit}, \emph{Welsh Powell},
-\emph{Largest Degree Ordering}, \emph{Incidence Degree Ordering},
-\emph{Degree of Saturation} e \emph{Recursive Largest First} foram 
-implementados e suas performances, tanto em tempo de execução, quanto em qualidade
-da solução, foram comparadas.
+Os algoritmos: \emph{First Fit}, \emph{Welsh Powell}, \emph{Largest Degree Ordering},
+\emph{Incidence Degree Ordering}, \emph{Degree of Saturation} e
+\emph{Recursive Largest First} foram implementados e suas performances, tanto em
+tempo de execução, quanto em qualidade da solução, foram comparadas.
 
 \textit{\textbf{Palavras-Chave:}} Coloração de grafos, Número cromático, Heurísticas, Otimização.
 \end{abstract}
@@ -410,7 +409,9 @@ $U \gets \emptyset$\;
 Nessa seção serão apresentados os resultados obtidos pela implementação.
 
 Os algoritmos foram implementados usando a linguagem C++ e os experimentos foram
-rodados em um computador com processador AMD~Ryzen~5~3600XT e com 16 GB de memória.
+rodados em um computador com processador AMD~Ryzen~5~3600XT e com 16 GB de memória,
+rodando o sistema operacional Windows 10.
+O programa foi compilado usando o GNU GCC.
 
 Para fazer o \emph{benchkmark} os algoritmos, foram usados grafos da base DIMACS~\cite{dimacs}.
 A Tabela~\ref{tab:experiments} apresenta as informações de cada grafo, bem como
