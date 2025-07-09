@@ -6,4 +6,5 @@ program
 manuscript/*
 !manuscript/main.tex
 !manuscript/results.tex
+!manuscript/img
 !manuscript/bibliography.bib
