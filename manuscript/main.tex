@@ -1,9 +1,8 @@
-\documentclass[10pt]{article}
+\documentclass[10pt, twocolumn]{article}
 
 \usepackage{geometry}
 \geometry{left=1.7cm,right=1.7cm, top=1.7cm, bottom=1.7cm}
 
-\usepackage{multicol}
 \setlength{\columnsep}{1cm}
 
 \usepackage{nopageno}
@@ -18,15 +17,23 @@
 \usepackage[brazil]{babel}
 
 \usepackage{hyperref}
+\hypersetup{%
+    colorlinks,
+    linkcolor={black},
+    citecolor={black},
+    urlcolor={blue!60!black}
+}
 
 \usepackage{booktabs}
 \usepackage{adjustbox}
 
-\usepackage[ruled]{algorithm2e}
+\usepackage[ruled, portuguese, onelanguage]{algorithm2e}
+\SetKwBlock{Loop}{loop}{fim}
 
 % ----------------------------
 % Updating section headers
 \usepackage{titlesec}
+% \usepackage{abstract}
 
 \renewcommand{\thesection}{\Roman{section}.}
 \titleformat{\section}
@@ -35,6 +42,16 @@
 \renewcommand{\thesubsection}{\Alph{subsection}.}
 \titleformat{\subsection}
 {\itshape}{\thesubsection}{1em}{}
+
+  \renewenvironment{abstract}{%
+      \if@twocolumn
+        \section*{\abstractname}%
+      \else
+        \small
+        \paragraph{\emph{\abstractname:}}
+      \fi}
+    %   {\if@twocolumn\else\par\bigskip\fi}
+
 
 % ----------------------------
 % Updating captions
@@ -66,7 +83,8 @@
     \begin{center}
 }
 \postauthor{
-    \end{center}
+    \par\end{center}
+    \vspace{-5em}
     \fontsize{10}{10}
 }
 
@@ -83,46 +101,79 @@
 
 \begin{document}
 
+\twocolumn[
 \maketitle
+\begin{@twocolumnfalse}
 
 \noindent
 \small
-\textit{\textbf{Resumo}}
+\begin{abstract} 
 
-\noindent
-Bla bla
+O Problema da Coloração de Vértices é um problema clássico em grafos.
+Ele consiste em colorir o grafo com o menor número possível de cores de modo que
+dois vértices adjacentes não compartilhem a mesma cor. Este problema é NP-difícil,
+logo, o presente trabalho objetiva estudar a coloração de grafos por meio de heurísticas.
+Os algoritmos: \emph{First Fit}, \emph{Welsh Powell},
+\emph{Largest Degree Ordering}, \emph{Incidence Degree Ordering},
+\emph{Degree of Saturation} e \emph{Recursive Largest First} foram 
+implementados e suas performances, tanto em tempo de execução, quanto em qualidade
+da solução, foram comparadas.
+
+\textit{\textbf{Palavras-Chave:}} Coloração de grafos, Número cromático, Heurísticas, Otimização.
+\end{abstract}
+
+\end{@twocolumnfalse}
+]
 
 \mdseries
 \normalsize
 \indent
 
-\begin{multicols*}{2}
+% \begin{multicols*}{2}
 \section{Introdução}
 
-O problema de coloração de vértices, ou \emph{Graph Coloring Problem} (GCP), é
-conhecido como um problema clássico na computação, apesar de postulado muito 
+O Problema da Coloração de Vértices, ou \emph{Graph Coloring Problem} (GCP), é
+um problema clássico na computação, apesar de postulado muito 
 antes do concebimento da ideia de computadores. 
 O problema consiste em colorir todos os vértices de um determinado grafo com o 
-menor número de cores possível sem que haja nenhum vizinho da mesma cor. 
-A natureza do problema caracteriza-se dentro da categoria de NP-Difícil [1], 
-contudo existem diversos algoritmos que tentam abordá-lo de diferentes formas 
-para obter um resultado eficiente. Dentro dessas soluções, as heurísticas se
-destacam pela rapidez enquanto seus resultados se aproximam do resultado ótimo.
+menor número de cores possível sem que haja nenhum vizinho da mesma cor,
+sendo classificado como problema de otimização.
+O número mínimo de cores necessárias pra colorir um grafo $G$ é chamado de
+número cromático de $G$ e é denotado por $\chi(G)$.
 
-Com isso, o artigo se centrará em testar seis diferentes algoritmos heurísticos 
-seguindo a descrição do artigo de referência, criando comparações por meio de 
-tabelas e gráficos. Os algoritmos são: \emph{First Fit}~(FF),
-\emph{Welsh Powell}~(WP), \emph{Largest Degree Ordering}~(LDO),
-\emph{Incidence Degree Ordering}~(IDO), \emph{Degree of Saturation}~(DSATUR)
-e \emph{Recursive Largest First}~(RLF).
+O GCP é um problema NP-difícil~\cite{AsBa18}, de modo que encontrar a solução ótima é uma 
+tarefa computacionalmente custosa. 
+No entanto, existem algoritmos que tentam abordá-lo de diferentes formas 
+para obter um resultado eficiente.
+Um exemplo disso são as heurísticas, que se aproveitam das características do 
+problema para encontrar soluções boas (e diversas vezes próximas às ótimas)
+em um tempo razoável.
+
+O presente artigo aborda o Problema da Coloração de Vértices de grafos utilizando
+heurísticas.
+Foram implementados e testados seis algoritmos heurísticos com base no artigo de
+Aslan e Baykan: \emph{First Fit}~(FF), \emph{Welsh Powell}~(WP),
+\emph{Largest Degree Ordering}~(LDO), \emph{Incidence Degree Ordering}~(IDO),
+\emph{Degree of Saturation}~(DSATUR) e \emph{Recursive Largest First}~(RLF)~\cite{AsBa18}.
+
+Por fim, os algoritmos são comparados com respeito ao tempo de execução e à
+qualidade da solução encontrada.
+
 
 \section{Algoritmos}
+
 Nesta seção serão apresentados os algoritmos em pseudo-código.
+Dado um grafo $G(V,E)$, a cor de um vértice $v \in V$ é denotada por $C(v)$.
+Se ainda não foi designada uma cor ao vértice, $C(v) = \textnormal{NULL}$.
+Ademais, dado $A \subset V$, $C(A)$ denota o conjunto de cores dos vértices em $A$,
+ou seja, $C(A)\nobreak=\nobreak\bigcup_{v \in A} C(v)$. Por fim, o conjunto
+$cores = \{c_1, c_2, \dots, c_k\}$ é o conjunto de cores usadas por uma solução,
+onde cada $c_i$, para $i = 1, 2, \dots, k$, é uma cor distinta.
 
 % ------------------------------------------
 % First Fit Algorithm
 
-\begin{algorithm}[H]
+\begin{algorithm}
 \caption{First Fit (FF)}
 \label{alg:ff}
 
@@ -154,31 +205,39 @@ $C(v) \gets$ NULL, $\forall v \in V$\;
 % ------------------------------------------
 % Welsh Powell Algorithm
 
-\begin{algorithm}[H]
+\begin{algorithm}
 \caption{Welsh Powell (WP)}
 \label{alg:wp}
 
 \KwData{Grafo $G(V,E)$}
 \KwResult{Coloração de $G$}
 
-
-\emph{cores} $\gets \{c_1\}$\;
-$n \gets 1$\;
+\emph{cores} $\gets \emptyset$\;
+$n \gets 0$\;
 
 $C(v) \gets$ NULL, $\forall v \in V$\;
 
-$v \gets \argmax_{v \in V} d_G(v)$\;
-uncolored $\gets V \setminus \{v\}$\;
+$U \gets V$\;
 
-\While{uncolored $\neq \emptyset$}{
-    $V' \gets$ uncolored $\setminus N(v)$\;
-    \While{$V' \neq \emptyset$}{
-        $v \gets \argmax_{v \in V'} d_G(v)$\;
-        $C(v) \gets c_n$\;
-        uncolored $\gets$ uncolored $\setminus \{v\}$\;
-        $V' \gets V' \setminus N(v)$\;
-    }
+\While{$U \neq \emptyset$} {
+    $v \gets \argmax_{v \in U} d_G(v)$\;
+
     $n \gets n + 1$\;
+    \emph{cores} $\gets \emph{cores} \cup \{c_n\}$\;
+
+    $C(v) \gets C_n$\;
+    $U \gets U \setminus \{v\}$\;
+
+    $V' \gets U \setminus N(v)$\;
+
+    \While{$V' \neq \emptyset$} {
+        $v \gets \argmax_{v \in V'} d_G(v)$\;
+        
+        $C(v) \gets C_n$\;
+        $U \gets U \setminus \{v\}$\;
+
+        $V' \gets V' \setminus (\{v\} \cup N(v))$\;
+    }
 }
 
 \Return{$C$}\;
@@ -189,7 +248,7 @@ uncolored $\gets V \setminus \{v\}$\;
 % ------------------------------------------
 % Largest Degree Ordering Algorithm
 
-\begin{algorithm}[H]
+\begin{algorithm}
 \caption{Largest Degree Ordering (LDO)}
 \label{alg:ldo}
 
@@ -224,7 +283,7 @@ Coloque $V'$ em ordem decrescente de graus dos vértices\;
 % ------------------------------------------
 % Incidence Degree Ordering Algorithm
 
-\begin{algorithm}[H]
+\begin{algorithm}
 \caption{Incidence Degree Ordering (IDO)}
 \label{alg:ido}
 
@@ -233,35 +292,29 @@ Coloque $V'$ em ordem decrescente de graus dos vértices\;
 
 \emph{cores} $\gets \emptyset$\;
 $n \gets 0$\;
-
 $C(v) \gets$ NULL, $\forall v \in V$\;
-$CN(v) \gets$ 0, $\forall v \in V$\;
+$U \gets V$\;
 
+\While{$U \neq \emptyset$}{
+    $v \gets \argmax_{v \in U} |N(v) \setminus U|$, em caso de empate, pegue a
+    opção de maior grau em $G$.
 
-$V' \gets V$\;
-Coloque $V'$ em ordem decrescente de graus dos vértices\;
-
-\While{$V' \neq \emptyset$}{
-   \textcolor{red}{$v \gets \argmax_{v \in V'}CN(v)$}\; % Mudar, não gostei
-    
     \ForEach{$c \in$ cores} {
         \If{$c \notin C(N(v))$}{
             $C(v) \gets c$\;
             break;
         }
     }
+
     \If{$C(v) = $ \textnormal{NULL}}{
         $n \gets n+1$\;
         \emph{cores} $\gets$ \emph{cores} $\cup \{ c_n \}$\;
         $C(v) \gets c_n$\;
     }
 
-    \ForEach{$u \in N(v)$}{
-        $CN(u) \gets CN(u) + 1$\; 
-    }
-
-    $V' \gets V' \setminus \{v\}$\;
+    $U \gets U \setminus \{v\}$\;
 }
+
 \Return{$C$}\;
 
 \end{algorithm}
@@ -270,7 +323,7 @@ Coloque $V'$ em ordem decrescente de graus dos vértices\;
 % ------------------------------------------
 % Degree of Saturation Algorithm
 
-\begin{algorithm}[H]
+\begin{algorithm}
 \caption{Degree of Saturation (DSATUR)}
 \label{alg:dsatur}
 
@@ -282,11 +335,10 @@ $n \gets 0$\;
 
 $C(v) \gets$ NULL, $\forall v \in V$\;
 
-$V' \gets V$\;
-Coloque $V'$ em ordem decrescente de graus dos vértices\;
+$U \gets V$\;
 
-\While{$V' \neq \emptyset$}{
-   \textcolor{red}{$v \gets \argmax_{v \in V'}|C(N(v))|$}\; % Mudar, não gostei
+\While{$U \neq \emptyset$}{
+    $v \gets \argmax_{v \in U} |C(N(v) \setminus U)|$, em caso de empate, pegue a opção de maior grau em $G$.
     
     \ForEach{$c \in$ cores} {
         \If{$c \notin C(N(v))$}{
@@ -294,13 +346,14 @@ Coloque $V'$ em ordem decrescente de graus dos vértices\;
             break;
         }
     }
+
     \If{$C(v) = $ \textnormal{NULL}}{
         $n \gets n+1$\;
         \emph{cores} $\gets$ \emph{cores} $\cup \{ c_n \}$\;
         $C(v) \gets c_n$\;
     }
 
-    $V' \gets V' \setminus \{v\}$\;
+    $U \gets U \setminus \{v\}$\;
 }
 \Return{$C$}\;
 
@@ -310,34 +363,67 @@ Coloque $V'$ em ordem decrescente de graus dos vértices\;
 % ------------------------------------------
 % Recursive Largest First Algorithm
 
-\begin{algorithm}[H]
+\begin{algorithm}
 \caption{Recursive Largest First (RLF)}
 \label{alg:rlf}
 
 \KwData{Grafo $G(V,E)$}
 \KwResult{Coloração de $G$}
 
-$colors \gets \emptyset$\;
-$v \gets V[1]$;
+\emph{cores} $\gets \emptyset$\;
+$n \gets 0$\;
+$C(v) \gets$ NULL, $\forall v \in V$\;
+$V' \gets V$\;
+$U \gets \emptyset$\;
+
+\Loop {
+    $v \gets \argmax_{v \in V'} |N_{G[V']}(v)|$\;
+    $n \gets n + 1$\;
+    \emph{cores} $\gets \emph{cores} \cup {c_n}$\;
+
+    \Loop {
+        $C(v) \gets C_n$\;
+        $V' \gets V' \setminus (\{v\} \cup N(v))$\;
+        $U \gets U \cup N(v)$\;
+
+        \If{$V' \neq \emptyset$}{
+            $v\nobreak\gets\nobreak \argmax_{v \in V'} |\{(v, k) : k \in \nobreak U \textnormal{ e } (v, k) \in E(G)\}|$\;
+            % $v\nobreak\gets\nobreak \argmax_{v \in V'} \left|\{(v, k) \mid k \in U\} \cap E(G)\right|$\;
+            continue\;
+        }
+
+        \eIf{$\not \exists v \in V \mid C(v) =$ NULL} {
+            \Return{$C$}\;
+        } {
+            $V' \gets U$\;
+            $U \gets \emptyset$\;
+            break\;
+        }
+    }
+}
 
 \end{algorithm}
 
 
 \section{Experimentos computacionais}
+\input{results.tex}
 Nessa seção serão apresentados os resultados obtidos pela implementação.
 
 Os algoritmos foram implementados usando a linguagem C++ e os experimentos foram
 rodados em um computador com processador AMD~Ryzen~5~3600XT e com 16 GB de memória.
-\input{results.tex}.
 
-Para comparar os algoritmos, foram usados grafos da base \emph{DIMACS}.
+Para fazer o \emph{benchkmark} os algoritmos, foram usados grafos da base DIMACS~\cite{dimacs}.
 A Tabela~\ref{tab:experiments} apresenta as informações de cada grafo, bem como
 os dados da execução de cada algoritmo, identificados pela abreviação do 
 algoritmo, que incluem a solução incumbente (K) e o tempo de execução (T), em
 milissegundos.
 
+
 \section{Conclusão}
 
-\end{multicols*}
+\bibliographystyle{amsplain}
+\bibliography{bibliography.bib}
+
+% \end{multicols*}
 
 \end{document}
