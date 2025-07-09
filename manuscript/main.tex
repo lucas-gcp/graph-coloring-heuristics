@@ -55,8 +55,10 @@
 
 % ----------------------------
 % Updating captions
-\addto\captionsbrazil{\renewcommand{\tablename}{\sc Table}}
-\usepackage[labelsep=newline, font={footnotesize, sc}]{caption}
+\usepackage{caption}
+
+\captionsetup[table]{labelsep=newline, font={footnotesize, sc}}
+\captionsetup[figure]{labelsep=period, font=footnotesize}
 
 % ----------------------------
 % Declaring math operations
@@ -88,13 +90,13 @@
     \fontsize{10}{10}
 }
 
-\title{Algoritmos de Coloração\vspace{-1ex}}
+\title{Comparação de Algoritmos Heurísticos para o Problema da Coloração de Vértices\vspace{-1ex}}
 
 \author[1]{Lucas Guido}
 \author[2]{Caio Stoduto\fontsize{10}{10}\vspace{-1ex}}
-\affil[1]{\fontsize{10}{10}Universidade Federal do ABC, Santo André -- SP, Brasil  \authorcr
+\affil[1]{\fontsize{10}{10}CMCC, Universidade Federal do ABC, Santo André -- SP, Brasil  \authorcr
 \fontsize{9}{9}\texttt{lucas.guido@aluno.ufabc.edu.br}\fontsize{10}{10}}
-\affil[2]{\fontsize{10}{10}Universidade Federal do ABC, Santo André -- SP, Brasil \authorcr
+\affil[2]{\fontsize{10}{10}CMCC, Universidade Federal do ABC, Santo André -- SP, Brasil \authorcr
 \fontsize{9}{9}\texttt{caio.stoduto@aluno.ufabc.edu.br}\fontsize{10}{10}}
 
 \date{}
@@ -150,8 +152,8 @@ em um tempo razoável.
 
 O presente artigo aborda o Problema da Coloração de Vértices de grafos utilizando
 heurísticas.
-Foram implementados e testados seis algoritmos heurísticos com base no artigo de
-Aslan e Baykan: \emph{First Fit}~(FF), \emph{Welsh Powell}~(WP),
+Para isso, foram implementados e testados seis algoritmos heurísticos com base no artigo de
+Aslan e Baykan~\cite{AsBa18}: \emph{First Fit}~(FF), \emph{Welsh Powell}~(WP),
 \emph{Largest Degree Ordering}~(LDO), \emph{Incidence Degree Ordering}~(IDO),
 \emph{Degree of Saturation}~(DSATUR) e \emph{Recursive Largest First}~(RLF)~\cite{AsBa18}.
 
@@ -161,13 +163,19 @@ qualidade da solução encontrada.
 
 \section{Algoritmos}
 
-Nesta seção serão apresentados os algoritmos em pseudo-código.
-Dado um grafo $G(V,E)$, a cor de um vértice $v \in V$ é denotada por $C(v)$.
+Nesta seção serão apresentados os algoritmos em pseudocódigo.
+Todos os seis algoritmos estudados neste artigo são heurísticas determinísticas,
+ou seja, não utilizam nenhuma etapa dependente de probabilidade, de modo que
+todas as soluções são construídas a partir da estrutura do grafo.
+
+Para os pseudocódigos, são consideradas as seguintes notações:
+dado um grafo $G(V,E)$, a cor de um vértice $v \in V$ é denotada por $C(v)$.
 Se ainda não foi designada uma cor ao vértice, $C(v) = \textnormal{NULL}$.
 Ademais, dado $A \subset V$, $C(A)$ denota o conjunto de cores dos vértices em $A$,
 ou seja, $C(A)\nobreak=\nobreak\bigcup_{v \in A} C(v)$. Por fim, o conjunto
 $cores = \{c_1, c_2, \dots, c_k\}$ é o conjunto de cores usadas por uma solução,
 onde cada $c_i$, para $i = 1, 2, \dots, k$, é uma cor distinta.
+
 
 % ------------------------------------------
 % First Fit Algorithm
@@ -362,7 +370,7 @@ $U \gets V$\;
 % ------------------------------------------
 % Recursive Largest First Algorithm
 
-\begin{algorithm}
+\begin{algorithm}[ht]
 \caption{Recursive Largest First (RLF)}
 \label{alg:rlf}
 
@@ -405,7 +413,6 @@ $U \gets \emptyset$\;
 
 
 \section{Experimentos computacionais}
-\input{results.tex}
 Nessa seção serão apresentados os resultados obtidos pela implementação.
 
 Os algoritmos foram implementados usando a linguagem C++ e os experimentos foram
@@ -413,16 +420,64 @@ rodados em um computador com processador AMD~Ryzen~5~3600XT e com 16 GB de memó
 rodando o sistema operacional Windows~10.
 O programa foi compilado usando o GNU GCC.
 
-Para fazer o \emph{benchkmark} os algoritmos, foram usados grafos da base DIMACS~\cite{dimacs}.
+Para fazer o \emph{benchkmark} dos algoritmos, foram usados grafos da base DIMACS~\cite{dimacs}.
 A Tabela~\ref{tab:experiments} apresenta as informações de cada grafo, bem como
 os dados da execução de cada algoritmo, identificados pela abreviação do 
 algoritmo, que incluem a solução incumbente (K) e o tempo de execução (T), em
-milissegundos. Para obter um tempo de execução consistente, cada algoritmo foi
+milissegundos.
+Para obter um tempo de execução consistente, cada algoritmo foi
 executado 50 vezes para cada grafo, e foi obtida a média aritmética do tempo
 de execução.
+Além do mais, a tabela também apresenta a melhor solução conhecida
+para cada grafo (Best K). Os valores em negrito indicam que a solução é ótima
+(Best K = $\chi(G)$).
+
+\input{results.tex}
+
+O gráfico da Fig.~\ref{fig:boxplot} apresenta a acurácia de cada algoritmo com
+relação à melhor solução conhecida.
+Para calcular a acurácia de cada algoritmo para cada grafo, foi usada a fórmula
+$A=K_{B}/K_A$, onde $K_{B}$ é a melhor solução conhecida para o grafo e
+$K_A$ é a solução incumbente de cada algoritmo.
+
+
+
+A partir do gráfico da Fig.~\ref{fig:boxplot}, é possível observar que o algoritmo
+\emph{First Fit} resultou nas piores soluções, enquanto o \emph{Recursive Largest First}
+foi o melhor, com uma média de 80\% do \emph{Best K} e chegando a uma acurácia de 93\%.
+Os outros algoritmos tiveram todos soluções de qualidade parecida, entre FF e RLF
+e com acurácia média por volta de 70\%.
+
+Apesar de diversos algoritmos possuírem soluções de alta acurácia (acima de 90\%),
+é importante notar que nenhum atingiu o \emph{Best K}, indicando que existem
+alternativas melhores.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[scale=0.42]{img/boxplot.png}
+  % \caption{Gráfico da porcentagem de instâncias de acordo com a distância mínima para b(G)}
+  \caption{Boxplot indicando a acurácia das soluções incumbentes encontradas por
+  cada algoritmo em relação ao melhor valor conhecido.
+  O eixo $x$ indica a acurácia, enquanto que o eixo $y$ indica os algoritmos.
+  O triângulo verde indica a média da acurácia do modelo.
+  }
+  \label{fig:boxplot}
+\end{figure}
+
+Em quesito de tempo, o RLF foi consistentemente o mais lento, o que pode ser
+justificado pela qualidade superior das soluções.
+O DSATUR também apresentou execução mais lenta comparado aos outros, indicando
+que este algoritmo não é uma boa escolha para os grafos usados no \emph{benchmark},
+pois produziu soluções de qualidade similar a outros com tempo de execução muito menor.
+
 
 
 \section{Conclusão}
+Observando a performance dos algoritmos para o problema de GCP, é possível concluir
+que o algoritmo RLF obtém a média com maior acurácia, chegando até a $93.23\%$ nos
+grafos de \emph{benchmark}. Contudo, levando em consideração o tempo de execução
+de cada algoritmo, a longa duração de execução do RLF deve ser levada em consideração,
+já que é discrepantemente mais lento que os outros algoritmos.
 
 \bibliographystyle{amsplain}
 \bibliography{bibliography.bib}
