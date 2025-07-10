@@ -26,6 +26,7 @@
 
 \usepackage{booktabs}
 \usepackage{adjustbox}
+\usepackage{float}
 
 \usepackage[ruled, portuguese, onelanguage]{algorithm2e}
 \SetKwBlock{Loop}{loop}{fim}
@@ -123,7 +124,7 @@ tempo de execução, quanto em qualidade da solução, foram comparadas.
 \textit{\textbf{Palavras-Chave:}} Coloração de grafos, Número cromático, Heurísticas, Otimização.
 \end{abstract}
 
-\vspace{2em}
+\vspace{1em}
 \end{@twocolumnfalse}
 ]
 \mdseries
@@ -131,6 +132,8 @@ tempo de execução, quanto em qualidade da solução, foram comparadas.
 \indent
 
 % \begin{multicols*}{2}
+
+\vspace{-2.7em}
 \section{Introdução}
 
 O Problema da Coloração de Vértices, ou \emph{Graph Coloring Problem} (GCP), é
@@ -150,8 +153,8 @@ Um exemplo disso são as heurísticas, que se aproveitam das características do
 problema para encontrar soluções boas (e diversas vezes próximas às ótimas)
 em um tempo razoável.
 
-O presente artigo aborda o Problema da Coloração de Vértices de grafos utilizando
-heurísticas.
+Tendo isso em vista, o presente artigo aborda o Problema da Coloração de Vértices
+de grafos por meio de heurísticas.
 Para isso, foram implementados e testados seis algoritmos heurísticos com base no artigo de
 Aslan e Baykan~\cite{AsBa18}: \emph{First Fit}~(FF), \emph{Welsh Powell}~(WP),
 \emph{Largest Degree Ordering}~(LDO), \emph{Incidence Degree Ordering}~(IDO),
@@ -176,9 +179,11 @@ ou seja, $C(A)\nobreak=\nobreak\bigcup_{v \in A} C(v)$. Por fim, o conjunto
 $cores = \{c_1, c_2, \dots, c_k\}$ é o conjunto de cores usadas por uma solução,
 onde cada $c_i$, para $i = 1, 2, \dots, k$, é uma cor distinta.
 
-
 % ------------------------------------------
 % First Fit Algorithm
+O Algoritmo~\ref{alg:ff} (FF) é o mais simples de todos. Ele seleciona os vértices
+do grafo sequencialmente e associa a primeira cor possível. Caso todas as cores
+estejam na vizinhança, uma nova cor é criada.
 
 \begin{algorithm}
 \caption{First Fit (FF)}
@@ -211,6 +216,11 @@ $C(v) \gets$ NULL, $\forall v \in V$\;
 
 % ------------------------------------------
 % Welsh Powell Algorithm
+O Algoritmo~\ref{alg:wp} (WP) usa o grau dos vértices como critério para
+selecionar os vértices. Partindo de um vértice inicial, ele constrói um conjunto
+independente (sem vértices adjacentes), sempre usando o vértice de maior grau,
+e associa uma cor aos vértices deste conjunto. Este processo é repetido até que
+todos os vértices estejam coloridos.
 
 \begin{algorithm}
 \caption{Welsh Powell (WP)}
@@ -232,7 +242,7 @@ $U \gets V$\;
     $n \gets n + 1$\;
     \emph{cores} $\gets \emph{cores} \cup \{c_n\}$\;
 
-    $C(v) \gets C_n$\;
+    $C(v) \gets c_n$\;
     $U \gets U \setminus \{v\}$\;
 
     $V' \gets U \setminus N(v)$\;
@@ -240,7 +250,7 @@ $U \gets V$\;
     \While{$V' \neq \emptyset$} {
         $v \gets \argmax_{v \in V'} d_G(v)$\;
         
-        $C(v) \gets C_n$\;
+        $C(v) \gets c_n$\;
         $U \gets U \setminus \{v\}$\;
 
         $V' \gets V' \setminus (\{v\} \cup N(v))$\;
@@ -254,6 +264,11 @@ $U \gets V$\;
 
 % ------------------------------------------
 % Largest Degree Ordering Algorithm
+O Algoritmo~\ref{alg:ldo} (LDO) seleciona o vértice de maior grau
+e o colore com a primeira cor disponível. Caso nenhuma cor esteja disponível,
+uma nova é criada. Este processo se repete para todos os vértices do grafo em 
+ordem descrescente de grau.
+
 
 \begin{algorithm}
 \caption{Largest Degree Ordering (LDO)}
@@ -289,6 +304,11 @@ Coloque $V'$ em ordem decrescente de graus dos vértices\;
 
 % ------------------------------------------
 % Incidence Degree Ordering Algorithm
+O Algoritmo~\ref{alg:ido} (IDO) usa como critério para a seleção de
+vértices a quantidade de vizinhos coloridos, selecionando o vértice com maior
+e colorindo ele com a primeira cor disponível. Caso nenhuma cor esteja disponível,
+uma nova cor é criada. Este processo é repetido até todos os vértices serem pintados.
+
 
 \begin{algorithm}
 \caption{Incidence Degree Ordering (IDO)}
@@ -329,6 +349,10 @@ $U \gets V$\;
 
 % ------------------------------------------
 % Degree of Saturation Algorithm
+O Algoritmo~\ref{alg:dsatur} (DSATUR) é similar ao IDO, mas usa como critério
+a quantidade de cores adjacentes, ao invés da quantidade de vizinhos coloridos,
+como critério para selecionar os vértices.
+
 
 \begin{algorithm}
 \caption{Degree of Saturation (DSATUR)}
@@ -369,6 +393,10 @@ $U \gets V$\;
 
 % ------------------------------------------
 % Recursive Largest First Algorithm
+O Algoritmo~\ref{alg:rlf} (RLF) também constrói conjuntos independentes, que serão
+associados a cores. No entanto, a seleção dos vértices é feita de maneira mais
+cautelosa, usando como critério a quantidade de arestas para conjuntos de vértices
+ainda sem coloração~\cite{Pa08}.
 
 \begin{algorithm}[ht]
 \caption{Recursive Largest First (RLF)}
@@ -432,15 +460,11 @@ Além do mais, a tabela também apresenta a melhor solução conhecida
 para cada grafo (Best K). Os valores em negrito indicam que a solução é ótima
 (Best K = $\chi(G)$).
 
-\input{results.tex}
-
 O gráfico da Fig.~\ref{fig:boxplot} apresenta a acurácia de cada algoritmo com
 relação à melhor solução conhecida.
 Para calcular a acurácia de cada algoritmo para cada grafo, foi usada a fórmula
 $A=K_{B}/K_A$, onde $K_{B}$ é a melhor solução conhecida para o grafo e
 $K_A$ é a solução incumbente de cada algoritmo.
-
-
 
 A partir do gráfico da Fig.~\ref{fig:boxplot}, é possível observar que o algoritmo
 \emph{First Fit} resultou nas piores soluções, enquanto o \emph{Recursive Largest First}
@@ -452,25 +476,24 @@ Apesar de diversos algoritmos possuírem soluções de alta acurácia (acima de 
 é importante notar que nenhum atingiu o \emph{Best K}, indicando que existem
 alternativas melhores.
 
-\begin{figure}[ht]
-  \centering
-  \includegraphics[scale=0.42]{img/boxplot.png}
-  % \caption{Gráfico da porcentagem de instâncias de acordo com a distância mínima para b(G)}
-  \caption{Boxplot indicando a acurácia das soluções incumbentes encontradas por
-  cada algoritmo em relação ao melhor valor conhecido.
-  O eixo $x$ indica a acurácia, enquanto que o eixo $y$ indica os algoritmos.
-  O triângulo verde indica a média da acurácia do modelo.
-  }
-  \label{fig:boxplot}
-\end{figure}
-
 Em quesito de tempo, o RLF foi consistentemente o mais lento, o que pode ser
 justificado pela qualidade superior das soluções.
 O DSATUR também apresentou execução mais lenta comparado aos outros, indicando
 que este algoritmo não é uma boa escolha para os grafos usados no \emph{benchmark},
 pois produziu soluções de qualidade similar a outros com tempo de execução muito menor.
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.42]{img/boxplot.png}
+  % \caption{Gráfico da porcentagem de instâncias de acordo com a distância mínima para b(G)}
+  \caption{Boxplot indicando a acurácia das soluções incumbentes encontradas por
+  cada algoritmo em relação ao melhor valor conhecido.
+  O eixo $x$ indica a acurácia, enquanto que o eixo $y$ indica os algoritmos.
+  }
+  \label{fig:boxplot}
+\end{figure}
 
+\input{results.tex}
 
 \section{Conclusão}
 Observando a performance dos algoritmos para o problema de GCP, é possível concluir
@@ -478,6 +501,7 @@ que o algoritmo RLF obtém a média com maior acurácia, chegando até a $93.23\
 grafos de \emph{benchmark}. Contudo, levando em consideração o tempo de execução
 de cada algoritmo, a longa duração de execução do RLF deve ser levada em consideração,
 já que é discrepantemente mais lento que os outros algoritmos.
+
 
 \bibliographystyle{amsplain}
 \bibliography{bibliography.bib}
