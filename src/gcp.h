@@ -11,10 +11,7 @@ unsigned ldo(Graph &G);
 
 unsigned ido(Graph &G);
 
-unsigned ido1(Graph &G);
-
 unsigned dsatur(Graph &G);
-unsigned dsatur1(Graph &G);
 
 unsigned rlf(Graph &G);
 

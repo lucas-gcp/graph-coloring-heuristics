@@ -51,13 +51,6 @@ Graph::Graph(ifstream &in_file) {
         degrees[u - 1].degree++;
         degrees[v - 1].degree++;
     }
-
-        // for (auto i : adj_matrix) {
-        //     for (auto j : i) {
-        //         cout << j << " ";
-        //     }
-        //     cout << endl;
-        // }
 }
 
 double Graph::sortDegrees() {

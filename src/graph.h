@@ -13,7 +13,6 @@ struct {
 
 class Graph {
    private:
-    // unsigned n_vertices, n_edges;
     unsigned avg_d;
 
    public:
