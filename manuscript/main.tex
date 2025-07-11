@@ -21,7 +21,7 @@
     colorlinks,
     linkcolor={black},
     citecolor={black},
-    urlcolor={blue!60!black}
+    urlcolor={black}
 }
 
 \usepackage{booktabs}
@@ -444,7 +444,9 @@ $U \gets \emptyset$\;
 
 
 \section{Experimentos computacionais}
-Nessa seção serão apresentados os resultados obtidos pela implementação.
+Nessa seção serão apresentados os resultados obtidos pela implementação\footnote{
+O código está disponível em
+\url{https://github.com/lucas-gcp/graph-coloring-heuristics}}.
 
 Os algoritmos foram implementados usando a linguagem C++ e os experimentos foram
 rodados em um computador com processador AMD~Ryzen~5~3600XT e com 16 GB de memória,
@@ -501,8 +503,7 @@ devido à qualidade de suas soluções.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[scale=0.43]{img/boxplot.png}
-  % \caption{Gráfico da porcentagem de instâncias de acordo com a distância mínima para b(G)}
+  \includegraphics[scale=0.37]{img/boxplot.png}
   \caption{Boxplot indicando a acurácia das soluções incumbentes encontradas por
   cada algoritmo em relação ao melhor valor conhecido.
   O eixo $x$ indica a acurácia, enquanto que o eixo $y$ indica os algoritmos.
